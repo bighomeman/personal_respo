@@ -3,9 +3,10 @@
 
 from bs4 import BeautifulSoup
 import requests
-import re,sys
-import json
-import datetime
+import re
+import os
+os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
+import blacklist_tools
 
 def get_tr_list(url):
 	'''
@@ -66,3 +67,7 @@ def judge_level(fp,status):
 			return 'WARNING'
 		else:
 			return 'INFO'
+
+if __name__=="__main__":
+    dict = zeustracker()
+    blacklist_tools.temp_store(dict,'zeustracker')
