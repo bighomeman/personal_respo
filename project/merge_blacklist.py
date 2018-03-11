@@ -4,7 +4,7 @@ sys.dont_write_bytecode = True
 
 # 存储原始数据
 def get_blacklist_module():
-    parse_blacklist = parser_config.blacklist_function
+    parse_blacklist = parser_config.moudle_name
     for file_name in parse_blacklist:
          command = 'python .\get_blacklist\\' + file_name +'.py'
          try:
@@ -14,7 +14,7 @@ def get_blacklist_module():
                 print e
 
 def merge_blacklist(dir,date,name):
-    parse_blacklist = parser_config.blacklist_function
+    parse_blacklist = parser_config.moudle_name
     i = 0
     merge_result = {}
     for file_name in parse_blacklist:

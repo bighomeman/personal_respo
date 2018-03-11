@@ -4,6 +4,7 @@
 from elasticsearch import Elasticsearch
 import json
 import datetime,sys
+from blacklist_tools import load_dict
 
 class ESclient(object):
 	def __init__(self,server='192.168.0.122',port='9222'):
@@ -107,17 +108,6 @@ def get_split_DNSList(search_result):
 	for item in search_result[u'aggregations'][u'domainMD']['buckets']:
 		split_DNSList.append(item[u'key'].encode('unicode-escape').split('.'))
 	return split_DNSList
-
-def load_dict(filedir):
-	'''
-	加载本地的json文件
-	'''
-	try:
-		with open(filedir,'r') as f:
-			dict1=json.loads(f.read())
-	except IOError:
-		print 'Error'
-	return dict1
 
 def main(gte,lte,timestamp):
 	time=lte.split(" ")

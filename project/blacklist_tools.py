@@ -3,7 +3,6 @@
 
 import datetime
 import json
-import sys,time
 
 def judge_level(fp,status):
 	'''
@@ -78,16 +77,38 @@ def update_dict(dict1,dict2):
 			}
 	return ret_dict 
 
-def saveAsJSON(date,dict1,path):
+def saveAsJSON(date,dict1,path,name):
 	'''
 	保存为json
 	'''
-	file_name = path +str(date)+'.json'
+	file_name = path + name + '-' + str(date) + '.json'
 	try:
 		with open(file_name,'w') as f:
 			f.write(json.dumps(dict1))
 	except IOError:
 		print 'Error'
+
+def temp_store(dict,name):
+	'''
+	保存为json
+	'''
+	file_name = name+ '.json'
+	try:
+		with open(file_name,'w') as f:
+			f.write(json.dumps(dict))
+	except IOError:
+		print 'Error'
+
+def load_dict(filedir):
+	'''
+	加载本地的json文件
+	'''
+	try:
+		with open(filedir,'r') as f:
+			dict1=json.loads(f.read())
+	except IOError:
+		print 'Error'
+	return dict1
 
 def insert(Trie,element):
 	'''
@@ -108,9 +129,3 @@ def create_Trie(blacklist):
 	for domain in blacklist:
 		domainTrie=insert(domainTrie,domain)
 	return domainTrie
-
-def json_stdout(json_data):
-	for j,k in json_data.items():
-	    sys.stdout.write(j,':',k)
-        sys.stdout.flush()
-        time.sleep(1)

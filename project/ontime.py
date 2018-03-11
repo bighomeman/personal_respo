@@ -25,7 +25,7 @@ def store_run():
             print("Starting command."),time.ctime()
             # execute the command
             storeDate = (startTime).strftime('%Y-%m-%d')
-            command = r'python "%s"' %(storeDate)
+            command = r'python merge_blacklist.py "%s"' %(storeDate)
             status = os.system(command)
             print('done'+"-"*100),time.ctime()
             print("Command status = %s."%status)
@@ -63,5 +63,5 @@ def run(entertime,delta):
 if __name__=="__main__":
     entertime = '2018-02-25 00:00:00'
     delta = day
-    run(entertime,delta)
-    # store_run()
+    # run(entertime,delta)
+    store_run()
