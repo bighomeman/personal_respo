@@ -5,8 +5,8 @@ from bs4 import BeautifulSoup
 import requests
 import re
 import os
-os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
-import blacklist_tools
+# os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
+from store_json import *
 
 def get_tr_list(url):
 	'''
@@ -70,4 +70,4 @@ def judge_level(fp,status):
 
 if __name__=="__main__":
     dict = zeustracker()
-    blacklist_tools.temp_store(dict,'zeustracker')
+    store_json(dict,'zeustracker')

@@ -88,16 +88,7 @@ def saveAsJSON(date,dict1,path,name):
 	except IOError:
 		print 'Error'
 
-def temp_store(dict,name):
-	'''
-	保存为json
-	'''
-	file_name = name+ '.json'
-	try:
-		with open(file_name,'w') as f:
-			f.write(json.dumps(dict))
-	except IOError:
-		print 'Error'
+
 
 def load_dict(filedir):
 	'''
@@ -106,9 +97,10 @@ def load_dict(filedir):
 	try:
 		with open(filedir,'r') as f:
 			dict1=json.loads(f.read())
+			# print dict1
+			return dict1
 	except IOError:
 		print 'Error'
-	return dict1
 
 def insert(Trie,element):
 	'''
@@ -126,6 +118,9 @@ def create_Trie(blacklist):
 	根据blacklist创建Trie
 	'''
 	domainTrie={}
+	print blacklist
 	for domain in blacklist:
 		domainTrie=insert(domainTrie,domain)
 	return domainTrie
+
+# load_dict('.\data\\source-2018-03-11.json')
