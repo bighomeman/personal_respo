@@ -4,7 +4,8 @@
 from elasticsearch import Elasticsearch
 import json
 import datetime,sys
-from blacklist_tools import load_dict
+from blacklist_tools import load_dict,judge_level
+from parser_config import trie_store_path,source_store_path
 
 class ESclient(object):
 	def __init__(self,server='192.168.0.122',port='9222'):
@@ -13,49 +14,51 @@ class ESclient(object):
 	def get_es_domain(self,gte,lte,size=500000):
 		# 获取es的dns-*索引的domain
 		search_option={
-            "size": 0,
-            "query": {
-              "bool": {
-                "must": [
-                  {
-                    "query_string": {
-                      "query": "isresponse:0"
-                    }
-                  },
-                  {
-                    "range": {
-                      "@timestamp": {
-                        "gte": gte,
-                        "lte": lte,
-                        "format": "yyyy-MM-dd HH:mm:ss"
-                      }
-                    }
-                  }
-                ],
-                "must_not": []
-              }
-            },
-            "_source": {
-              "excludes": []
-            },
-            "aggs": {
-              "domainMD": {
-                "terms": {
-                  "field": "domain",
-                  "size": size,
-                  "order": {
-                    "_count": "desc"
-                  }
-                }
-              }
-            }
-        }
+			"size": 0,
+			"query": {
+				"bool": {
+					"must": [
+						{
+							"query_string": {
+							"query": "domain:*.*",
+							'analyze_wildcard': True
+							}
+						},
+						{
+							"range": {
+							"@timestamp": {
+								"gte": gte,
+								"lte": lte,
+								"format": "yyyy-MM-dd HH:mm:ss",
+								"time_zone": "+08:00"
+								}
+							}
+						}
+					],
+					"must_not": []
+				}
+			},
+			"_source": {
+				"excludes": []
+			},
+			"aggs": {
+				"domainMD": {
+					"terms": {
+						"field": "domain",
+						"size": size,
+						"order": {
+						"_count": "desc"
+						}
+					}
+				}
+			}
+		}
 
 		search_result=self.__es_client.search(
 			index='dns-*',
 			body=search_option
 			)
-		print search_result
+		# print search_result
 		return search_result
 
 	def es_index(self,doc):
@@ -101,11 +104,13 @@ def get_split_DNSList(search_result):
 		split_DNSList.append(item[u'key'].encode('unicode-escape').split('.'))
 	return split_DNSList
 
-def main(gte,lte,timestamp):
+def main(gte,lte,timestamp,server):
 	time=lte.split(" ")
-	blacklist_dir = ".\data\\resourceFile-"+str(time[0])+".json"
-	blacklist_Trie_dir = ".\data\\TrieFile-"+str(time[0])+".json"
-	es = ESclient(server = '192.168.0.122')
+	blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+str(time[0])+".json"
+	# print blacklist_dir
+	blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+str(time[0])+".json"
+	# print blacklist_Trie_dir
+	es = ESclient(server = server,port='9200')
 	search_result = es.get_es_domain(gte,lte,size=50000)
 	split_DNSList = get_split_DNSList(search_result)
 
@@ -122,10 +127,11 @@ def main(gte,lte,timestamp):
 			doc = blacklist[domain]
 			doc['domain'] = '.'.join(match_DNSList[i])
 			doc['@timestamp'] = timestamp
+			doc['level'] = judge_level(fp=doc['false_positive'],status=doc['status'])
 			es.es_index(doc)
 
 if __name__ == '__main__':
-	if len(sys.argv)>3:
-		main(sys.argv[1],sys.argv[2],sys.argv[3])
+	if len(sys.argv)>4:
+		main(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
 	else:
 		print '[ERROR] Insufficient number of input parameters'

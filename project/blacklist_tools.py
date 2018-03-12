@@ -58,14 +58,14 @@ def update_dict(dict1,dict2):
 			ret_type = dict1[domain]['type'] +';'+ dict2[domain]['type']
 			ret_source = dict1[domain]['source'] +';'+ dict2[domain]['source']
 			ret_status = judge_unknown(dict1[domain]['status'],dict2[domain]['status'])
-			ret_fp = judge_unknown(dict1[domain]['fp'],dict2[domain]['fp'])
+			ret_fp = judge_unknown(dict1[domain]['false_positive'],dict2[domain]['false_positive'])
 			ret_date = judge_date(dict1[domain]['date'],dict2[domain]['date'])
 			ret_dict[domain] = {
 			'type':ret_type,
 			'date':ret_date,
 			'source':ret_source,
 			'status':ret_status,
-			'fp':ret_fp
+			'false_positive':ret_fp
 			}
 	return ret_dict 
 
