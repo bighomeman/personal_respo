@@ -15,10 +15,10 @@ def store_run():
     #beginTime = datetime.datetime.strptime(begin, '%Y-%m-%d %H:%M:%S')
     #print startTime
     while True:
-
+        print 'The next start time :',startTime
         while datetime.datetime.now() < startTime:
             #print 'beginTime',beginTime
-            print 'startTime',startTime
+            # print 'startTime',startTime
             time.sleep(1)
             #beginTime = beginTime+second
         try:
@@ -40,7 +40,7 @@ def run(entertime,delta):
     #beginTime = datetime.datetime.strptime(begin, '%Y-%m-%d %H:%M:%S')
     #print startTime
     while True:
-
+        print 'The next start time :',startTime
         while datetime.datetime.now() < startTime:
             #print 'beginTime',beginTime
             #print 'startTime',startTime

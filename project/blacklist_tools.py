@@ -102,7 +102,7 @@ def insert(Trie,element):
 def create_Trie(blacklist):
 	# 根据blacklist创建Trie
 	domainTrie={}
-	print blacklist
+	# print blacklist
 	for domain in blacklist:
 		domainTrie=insert(domainTrie,domain)
 	return domainTrie

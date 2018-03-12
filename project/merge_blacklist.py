@@ -36,8 +36,8 @@ def store_trie(dir, date, name):
     source_store_path =parser_config.source_store_path
     path = source_store_path[1] + source_store_path[0] + "-" +date + '.json'
     result = load_dict(path)
-    print result
-    saveAsJSON(date,create_Trie(result),dir,name)
+    # print result
+    saveAsJSON(date,create_Trie([x.split('.') for x in result.keys()]),dir,name)
 
 
 
@@ -47,7 +47,7 @@ if __name__ == '__main__':
         trie_store_path = parser_config.trie_store_path
         get_blacklist_module()
         merge_blacklist(source_store_path[1],sys.argv[1],source_store_path[0])
-        # store_trie(trie_store_path[1],sys.argv[1],trie_store_path[0])
+        store_trie(trie_store_path[1],sys.argv[1],trie_store_path[0])
     else:
         print '[ERROR] Insufficient number of input parameters'
 

@@ -59,9 +59,7 @@ class ESclient(object):
 		return search_result
 
 	def es_index(self,doc):
-
 		# 数据回插es的alert-*索引
-
 		ret = self.__es_client.index(
 			index = 'alert-{}'.format(datetime.datetime.now().strftime('%Y-%m-%d')),
 			doc_type = 'netflow_v9',
@@ -110,10 +108,6 @@ def main(gte,lte,timestamp):
 	es = ESclient(server = '192.168.0.122')
 	search_result = es.get_es_domain(gte,lte,size=50000)
 	split_DNSList = get_split_DNSList(search_result)
-
-	# test：
-	# split_DNSList.append(['vmay','com'])
-	# split_DNSList.append(['a','vmay','com'])
 
 	blacklist_Trie = load_dict(blacklist_Trie_dir)
 	match_DNSList,match_blacklist = find_match_DNS(blacklist_Trie,split_DNSList)
