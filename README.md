@@ -13,7 +13,7 @@ About get_blacklist profile
 #                              { 'type':malware type 
 #                                'date':add date 'source':information web 
 #                                'status':online or offline 
-#                                'false position':'unknown' or 'low' or 'high' #misreporting rate for source web 
+#                                'false positive':'unknown' or 'low' or 'high' #misreporting rate for source web 
 #                                'level':'WARNING'or 'critical' #decide it by youself 
 #                                } , 
 #                    '...':
