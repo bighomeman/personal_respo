@@ -11,9 +11,7 @@ class ESclient(object):
 		self.__es_client=Elasticsearch([{'host':server,'port':port}])
 
 	def get_es_domain(self,gte,lte,size=500000):
-		'''
-		获取es的dns-*索引的domain
-		'''
+		# 获取es的dns-*索引的domain
 		search_option={
             "size": 0,
             "query": {
@@ -61,9 +59,9 @@ class ESclient(object):
 		return search_result
 
 	def es_index(self,doc):
-		'''
-		数据回插es的alert-*索引
-		'''
+
+		# 数据回插es的alert-*索引
+
 		ret = self.__es_client.index(
 			index = 'alert-{}'.format(datetime.datetime.now().strftime('%Y-%m-%d')),
 			doc_type = 'netflow_v9',
@@ -71,9 +69,7 @@ class ESclient(object):
 			)
 
 def isMatch(Trie,dname,domain =[]):
-	'''
-	判断dname是否在Trie里，返回匹配成功的域名，如['a','b','c']匹配上['b','c']则返回['b','c']
-	'''
+	# 判断dname是否在Trie里，返回匹配成功的域名，如['a','b','c']匹配上['b','c']则返回['b','c']
 	if not Trie:
 		return domain
 	elif not dname:
@@ -101,9 +97,7 @@ def find_match_DNS(Trie,split_DNSList):
 	return match_DNSList,match_blacklist
 
 def get_split_DNSList(search_result):
-	'''
-	清洗es获得的数据
-	'''
+	# 清洗es获得的数据
 	split_DNSList=[]
 	for item in search_result[u'aggregations'][u'domainMD']['buckets']:
 		split_DNSList.append(item[u'key'].encode('unicode-escape').split('.'))
@@ -125,9 +119,8 @@ def main(gte,lte,timestamp):
 	match_DNSList,match_blacklist = find_match_DNS(blacklist_Trie,split_DNSList)
 	print match_DNSList
 	print match_blacklist
-	'''
-	匹配的DNS回插到es
-	'''
+
+	# 匹配的DNS回插到es
 	if match_DNSList:
 		blacklist = load_dict(blacklist_dir)
 		for i in range(len(match_blacklist)):
@@ -138,4 +131,7 @@ def main(gte,lte,timestamp):
 			es.es_index(doc)
 
 if __name__ == '__main__':
-	main(sys.argv[1],sys.argv[2],sys.argv[3])
+	if len(sys.argv)>3:
+		main(sys.argv[1],sys.argv[2],sys.argv[3])
+	else:
+		print '[ERROR] Insufficient number of input parameters'

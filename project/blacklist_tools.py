@@ -5,9 +5,7 @@ import datetime
 import json
 
 def judge_level(fp,status):
-	'''
-	根据fp、status判断level
-	'''
+	# 根据fp、status判断level
 	if status == 'online':
 		if fp == 'high':
 			return 'WARNING'
@@ -28,9 +26,7 @@ def judge_level(fp,status):
 
 
 def judge_unknown(str1,str2):
-	'''
-	两个情报源发现相同的domain时，整合情报，判断fp与status的值
-	'''
+	# 两个情报源发现相同的domain时，整合情报，判断fp与status的值
 	if str1 == str2:
 		return str1
 	elif str1 != 'unknown' and str2 !='unknown':
@@ -41,9 +37,7 @@ def judge_unknown(str1,str2):
 		return str2
 
 def judge_date(str1,str2):
-	'''
-	两个情报源发现相同的domain时，记录最近的时间整合情报
-	'''
+	# 两个情报源发现相同的domain时，记录最近的时间整合情报
 	if str1 == str2:
 		return str1
 	else:
@@ -55,9 +49,7 @@ def judge_date(str1,str2):
 			return date2.strftime('%Y-%m-%d')
 
 def update_dict(dict1,dict2):
-	'''
-	合并两个字典
-	'''
+	# 合并两个字典
 	domain_insection = set(dict1.keys()) & set(dict2.keys())
 	print domain_insection
 	ret_dict = dict(dict1,**dict2)
@@ -78,9 +70,7 @@ def update_dict(dict1,dict2):
 	return ret_dict 
 
 def saveAsJSON(date,dict1,path,name):
-	'''
-	保存为json
-	'''
+	# 保存为json
 	file_name = path + name + '-' + str(date) + '.json'
 	try:
 		with open(file_name,'w') as f:
@@ -91,9 +81,7 @@ def saveAsJSON(date,dict1,path,name):
 
 
 def load_dict(filedir):
-	'''
-	加载本地的json文件
-	'''
+	# 加载本地的json文件
 	try:
 		with open(filedir,'r') as f:
 			dict1=json.loads(f.read())
@@ -103,9 +91,7 @@ def load_dict(filedir):
 		print 'Error'
 
 def insert(Trie,element):
-	'''
-	将element插入Trie
-	'''
+	# 将element插入Trie
 	if element:
 		item=element.pop()
 		if item not in Trie:
@@ -114,9 +100,7 @@ def insert(Trie,element):
 	return Trie
 
 def create_Trie(blacklist):
-	'''
-	根据blacklist创建Trie
-	'''
+	# 根据blacklist创建Trie
 	domainTrie={}
 	print blacklist
 	for domain in blacklist:
