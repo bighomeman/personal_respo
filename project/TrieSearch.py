@@ -3,7 +3,7 @@
 
 from elasticsearch import Elasticsearch
 import json
-import datetime,sys
+import datetime,sys,os
 from blacklist_tools import load_dict,judge_level
 from parser_config import trie_store_path,source_store_path
 
@@ -110,6 +110,17 @@ def main(gte,lte,timestamp,server):
 	# print blacklist_dir
 	blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+str(time[0])+".json"
 	# print blacklist_Trie_dir
+	count = 0
+	temp_time = datetime.datetime.strptime(lte,'%Y-%m-%d %H:%M:%S')
+	while (not (os.path.exists(blacklist_dir) and os.path.exists(blacklist_Trie_dir))) and count<30:
+		temp_time = temp_time + datetime.timedelta(days = -1)
+		time = temp_time.strftime('%Y-%m-%d %H:%M:%S').split(" ")
+		blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+str(time[0])+".json"
+		blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+str(time[0])+".json"
+		count += 1
+	if count == 30:
+		print "[ERROR] No blacklist data in last 30 days "
+		return 1
 	es = ESclient(server = server,port='9200')
 	search_result = es.get_es_domain(gte,lte,size=50000)
 	split_DNSList = get_split_DNSList(search_result)
