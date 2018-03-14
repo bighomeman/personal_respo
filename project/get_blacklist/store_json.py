@@ -2,9 +2,7 @@
 import json
 
 def store_json(dict,name):
-	'''
-	保存为json
-	'''
+	# 保存为json
 	file_name = name+ '.json'
 	try:
 		with open(file_name,'w') as f:

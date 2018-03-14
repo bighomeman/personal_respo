@@ -33,7 +33,7 @@ def store_run():
         except Exception, e:
             print e
 
-def run(entertime,delta):
+def run(entertime,delta,server='172.17.0.68'):
 
     startTime = datetime.datetime.strptime(entertime, '%Y-%m-%d %H:%M:%S')
     #begin= '2017-05-24 23:59:57'
@@ -51,8 +51,8 @@ def run(entertime,delta):
             # execute the command
             gte = (startTime-delta).strftime('%Y-%m-%d %H:%M:%S')
             lte = (startTime).strftime('%Y-%m-%d %H:%M:%S')
-            timestamp = (startTime).strftime('%Y-%m-%dT%H:%M:%S')+".000+08:00"
-            command = r'python TrieSearch.py "%s" "%s" "%s"' %(gte,lte,timestamp)
+            timestamp = (startTime).strftime('%Y-%m-%dT%H:%M:%S.%f')+"+08:00"
+            command = r'python TrieSearch.py "%s" "%s" "%s" "%s"' %(gte,lte,timestamp,server)
             status = os.system(command)
             print('done'+"-"*100),time.ctime()
             print("Command status = %s."%status)
@@ -61,7 +61,7 @@ def run(entertime,delta):
             print e
 
 if __name__=="__main__":
-    entertime = '2018-02-25 00:00:00'
-    delta = day
-    # run(entertime,delta)
-    store_run()
+    entertime = '2018-03-12 17:50:00'
+    delta = datetime.timedelta(minutes=5)
+    run(entertime,delta,server = '172.23.2.143')
+    # store_run()

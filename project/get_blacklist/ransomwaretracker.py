@@ -9,18 +9,14 @@ os.path.abspath(os.path.join(os.path.dirname(__file__),".."))
 from store_json import *
 
 def get_tr_list(url):
-	'''
-	获取html页面，提取所有的'tr'标签
-	'''
+	# 获取html页面，提取所有的'tr'标签
 	response = requests.get(url)
 	bs = BeautifulSoup(response.text,"html.parser")
 	tr_list = bs.find_all('tr')
 	return tr_list
 
 def ransomwaretracker(url = 'https://ransomwaretracker.abuse.ch/tracker/online/'):
-	'''
-	清洗ransomwaretracker的数据
-	'''
+	# 清洗ransomwaretracker的数据
 	tr_list = get_tr_list(url)
 	domain_dict = {}
 	pattern_ip = re.compile('^[0-9.]+$')
@@ -34,32 +30,9 @@ def ransomwaretracker(url = 'https://ransomwaretracker.abuse.ch/tracker/online/'
 			'status':'online',
 			'date':pattern_date.findall(td_list[0].get_text())[0],
 			'source':'https://ransomwaretracker.abuse.ch/host/{}/'.format(host),
-			'fp':'unknown',
-			'level':'CRITICAL'
+			'false_positive':'unknown'
 			}
 	return domain_dict
-
-def judge_level(fp,status):
-	'''
-	根据fp、status判断level
-	'''
-	if status == 'online':
-		if fp == 'high':
-			return 'WARNING'
-		else:
-			return 'CRITICAL'
-	elif status == 'unknown':
-		if fp == 'low':
-			return 'CRITICAL'
-		elif fp == 'high':
-			return 'INFO'
-		else:
-			return 'WARNING'
-	else:
-		if fp == 'low' or fp == 'unknown':
-			return 'WARNING'
-		else:
-			return 'INFO'
 
 if __name__=="__main__":
     dict = ransomwaretracker()
