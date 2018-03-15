@@ -3,37 +3,21 @@
 import os
 import time
 import datetime
+from parser_config import trie_store_path,source_store_path
 
 
-second = datetime.timedelta(seconds=1)
-day = datetime.timedelta(days=1)
+def store_run(storeDate):
+    try:
+        print("Starting command."),time.ctime()
+        # execute the command
+        command = r'python merge_blacklist.py "%s"' %(storeDate)
+        status = os.system(command)
+        print('done'+"-"*100),time.ctime()
+        print("Command status = %s."%status)
+    except Exception, e:
+        print e
 
-def store_run():
-    entertime = time.strftime("%Y-%m-%d %H:%M:%S")
-    startTime = datetime.datetime.strptime(entertime, '%Y-%m-%d %H:%M:%S')
-    #begin= '2017-05-24 23:59:57'
-    #beginTime = datetime.datetime.strptime(begin, '%Y-%m-%d %H:%M:%S')
-    #print startTime
-    while True:
-        print 'The next start time :',startTime
-        while datetime.datetime.now() < startTime:
-            #print 'beginTime',beginTime
-            # print 'startTime',startTime
-            time.sleep(1)
-            #beginTime = beginTime+second
-        try:
-            print("Starting command."),time.ctime()
-            # execute the command
-            storeDate = (startTime).strftime('%Y-%m-%d')
-            command = r'python merge_blacklist.py "%s"' %(storeDate)
-            status = os.system(command)
-            print('done'+"-"*100),time.ctime()
-            print("Command status = %s."%status)
-            startTime = startTime+day
-        except Exception, e:
-            print e
-
-def run(entertime,delta,server='172.17.0.68'):
+def run(delta,server,entertime=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')):
 
     startTime = datetime.datetime.strptime(entertime, '%Y-%m-%d %H:%M:%S')
     #begin= '2017-05-24 23:59:57'
@@ -46,6 +30,16 @@ def run(entertime,delta,server='172.17.0.68'):
             #print 'startTime',startTime
             time.sleep(1)
             #beginTime = beginTime+second
+
+        storeDate = datetime.datetime.now().strftime('%Y-%m-%d')
+        blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+storeDate+".json"
+        # print blacklist_dir
+        blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+storeDate+".json"
+        # print blacklist_Trie_dir
+
+        if not (os.path.exists(blacklist_dir) and os.path.exists(blacklist_Trie_dir)):
+            store_run(storeDate)
+
         try:
             print("Starting command."),time.ctime()
             # execute the command
@@ -61,7 +55,7 @@ def run(entertime,delta,server='172.17.0.68'):
             print e
 
 if __name__=="__main__":
-    entertime = '2018-03-12 17:50:00'
+    entertime = '2018-03-15 15:30:00'
     delta = datetime.timedelta(minutes=5)
-    run(entertime,delta,server = '172.23.2.143')
-    # store_run()
+    # run(delta = delta,server = '172.23.2.150',entertime = entertime)
+    run(delta,server = '172.23.2.150')
