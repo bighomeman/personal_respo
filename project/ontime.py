@@ -17,7 +17,7 @@ def store_run(storeDate):
     except Exception, e:
         print e
 
-def run(delta,server,entertime=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')):
+def run(delta,server,entertime):
 
     startTime = datetime.datetime.strptime(entertime, '%Y-%m-%d %H:%M:%S')
     #begin= '2017-05-24 23:59:57'
@@ -43,7 +43,7 @@ def run(delta,server,entertime=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:
         try:
             print("Starting command."),time.ctime()
             # execute the command
-            gte = (startTime-delta).strftime('%Y-%m-%d %H:%M:%S')
+            gte = (startTime-delta-delta).strftime('%Y-%m-%d %H:%M:%S')
             lte = (startTime).strftime('%Y-%m-%d %H:%M:%S')
             timestamp = (startTime).strftime('%Y-%m-%dT%H:%M:%S.%f')+"+08:00"
             command = r'python TrieSearch.py "%s" "%s" "%s" "%s"' %(gte,lte,timestamp,server)
@@ -55,7 +55,7 @@ def run(delta,server,entertime=datetime.datetime.now().strftime('%Y-%m-%d %H:%M:
             print e
 
 if __name__=="__main__":
-    entertime = '2018-03-15 15:30:00'
+    # entertime = '2018-03-15 15:30:00'
+    entertime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     delta = datetime.timedelta(minutes=5)
-    # run(delta = delta,server = '172.23.2.150',entertime = entertime)
-    run(delta,server = '172.23.2.150')
+    run(delta = delta,server = '172.23.2.150',entertime = entertime)
