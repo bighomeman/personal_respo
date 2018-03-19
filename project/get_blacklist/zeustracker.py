@@ -43,6 +43,11 @@ def zeustracker(url='https://zeustracker.abuse.ch/monitor.php?filter=all'):
 
 	return domain_dict
 
-if __name__=="__main__":
-    dict = zeustracker()
-    store_json(dict,'zeustracker')
+
+def main():
+	dict = zeustracker()
+	store_json(dict,'zeustracker')
+
+# if __name__=="__main__":
+#     dict = zeustracker()
+#     store_json(dict,'zeustracker')

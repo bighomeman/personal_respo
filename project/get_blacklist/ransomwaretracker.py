@@ -34,6 +34,11 @@ def ransomwaretracker(url = 'https://ransomwaretracker.abuse.ch/tracker/online/'
 			}
 	return domain_dict
 
-if __name__=="__main__":
-    dict = ransomwaretracker()
-    store_json(dict,'ransomwaretracker')
+
+def main():
+	dict = ransomwaretracker()
+	store_json(dict,'ransomwaretracker')
+
+# if __name__=="__main__":
+#     dict = ransomwaretracker()
+#     store_json(dict,'ransomwaretracker')

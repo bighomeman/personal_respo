@@ -1,21 +1,19 @@
 # -*- coding: utf-8 -*-
-import parser_config, os,sys
+import os,sys
 from blacklist_tools import *
+from parser_config import source_store_path,trie_store_path,moudle_name
+
 sys.dont_write_bytecode = True
 
 # 存储原始数据
 def get_blacklist_module():
-    parse_blacklist = parser_config.moudle_name
+    parse_blacklist = moudle_name
     for file_name in parse_blacklist:
-         command = 'python .\get_blacklist\\' + file_name +'.py'
-         try:
-              status = os.system(command)
-              print status
-         except Exception, e:
-                print e
+        module = __import__('get_blacklist.{}'.format(file_name),fromlist=True)
+        module.main()
 
 def merge_blacklist(dir,date,name):
-    parse_blacklist = parser_config.moudle_name
+    parse_blacklist = moudle_name
     i = 0
     merge_result = {}
     for file_name in parse_blacklist:
@@ -33,22 +31,23 @@ def merge_blacklist(dir,date,name):
 #建Trie树
 
 def store_trie(dir, date, name):
-    source_store_path =parser_config.source_store_path
     path = source_store_path[1] + source_store_path[0] + "-" +date + '.json'
     result = load_dict(path)
     # print result
     saveAsJSON(date,create_Trie([x.split('.') for x in result.keys()]),dir,name)
 
+def main(storeDate):
+    get_blacklist_module()
+    merge_blacklist(source_store_path[1],storeDate,source_store_path[0])
+    store_trie(trie_store_path[1],storeDate,trie_store_path[0])
 
 
-if __name__ == '__main__':
-    if len(sys.argv)>1:
-        source_store_path =parser_config.source_store_path
-        trie_store_path = parser_config.trie_store_path
-        get_blacklist_module()
-        merge_blacklist(source_store_path[1],sys.argv[1],source_store_path[0])
-        store_trie(trie_store_path[1],sys.argv[1],trie_store_path[0])
-    else:
-        print '[ERROR] Insufficient number of input parameters'
+# if __name__ == '__main__':
+#     if len(sys.argv)>1:
+#         get_blacklist_module()
+#         merge_blacklist(source_store_path[1],sys.argv[1],source_store_path[0])
+#         store_trie(trie_store_path[1],sys.argv[1],trie_store_path[0])
+#     else:
+#         print '[ERROR] Insufficient number of input parameters'
 
 

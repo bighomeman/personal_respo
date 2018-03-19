@@ -5,13 +5,13 @@ from elasticsearch import Elasticsearch
 import json
 import datetime,sys,os
 from blacklist_tools import load_dict,judge_level
-from parser_config import trie_store_path,source_store_path
+from parser_config import trie_store_path,source_store_path,ES_config
 
 class ESclient(object):
-	def __init__(self,server='192.168.0.122',port='9222'):
-		self.__es_client=Elasticsearch([{'host':server,'port':port}])
+	def __init__(self):
+		self.__es_client=Elasticsearch([{'host':ES_config[0],'port':ES_config[1]}])
 
-	def get_es_domain(self,gte,lte,size=500000):
+	def get_es_domain(self,gte,lte):
 		# 获取es的dns-*索引的domain
 		search_option={
 			"size": 0,
@@ -45,7 +45,7 @@ class ESclient(object):
 				"domainMD": {
 					"terms": {
 						"field": "domain",
-						"size": size,
+						"size": ES_config[2],
 						"order": {
 						"_count": "desc"
 						}
@@ -104,7 +104,7 @@ def get_split_DNSList(search_result):
 		split_DNSList.append(item[u'key'].encode('unicode-escape').split('.'))
 	return split_DNSList
 
-def main(gte,lte,timestamp,server):
+def main(gte,lte,timestamp):
 	time=lte.split(" ")
 	blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+str(time[0])+".json"
 	# print blacklist_dir
@@ -121,14 +121,14 @@ def main(gte,lte,timestamp,server):
 	if count == 30:
 		print "[ERROR] No blacklist data in last 30 days "
 		return 1
-	es = ESclient(server = server,port='9200')
-	search_result = es.get_es_domain(gte,lte,size=50000)
+	es = ESclient()
+	search_result = es.get_es_domain(gte,lte)
 	split_DNSList = get_split_DNSList(search_result)
 
 	blacklist_Trie = load_dict(blacklist_Trie_dir)
 	match_DNSList,match_blacklist = find_match_DNS(blacklist_Trie,split_DNSList)
-	print match_DNSList
-	print match_blacklist
+	# print match_DNSList
+	# print match_blacklist
 
 	# 匹配的DNS回插到es
 	if match_DNSList:
@@ -141,8 +141,9 @@ def main(gte,lte,timestamp,server):
 			doc['level'] = judge_level(fp=doc['false_positive'],status=doc['status'])
 			es.es_index(doc)
 
-if __name__ == '__main__':
-	if len(sys.argv)>4:
-		main(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
-	else:
-		print '[ERROR] Insufficient number of input parameters'
+
+# if __name__ == '__main__':
+# 	if len(sys.argv)>3:
+# 		main(sys.argv[1],sys.argv[2],sys.argv[3])
+# 	else:
+# 		print '[ERROR] Insufficient number of input parameters'

@@ -46,12 +46,21 @@ regex1=re.compile(r'\d+')
 regex2=re.compile(r'[a-zA-Z]+')
 period_num = regex1.findall(frequency[1])[0]
 period_scale = regex2.findall(frequency[1])[0]
-def export_period():
-    if period_scale == 's'or period_scale == 'S' :
-        period  = datetime.timedelta(seconds = int(period_num))
-    elif period_scale == 'm'or period_scale == 'M':
-        period = datetime.timedelta(minutes = int(period_num))
-    elif period_scale == 'd' or period_scale == 'D':
-        period = datetime.timedelta(days = int(period_num))
-    return period
+if period_scale == 's'or period_scale == 'S' :
+    period  = datetime.timedelta(seconds = int(period_num))
+elif period_scale == 'm'or period_scale == 'M':
+    period = datetime.timedelta(minutes = int(period_num))
+elif period_scale == 'd' or period_scale == 'D':
+    period = datetime.timedelta(days = int(period_num))
+frequency[1] = period
+
+if frequency[0] == 'now':
+    frequency[0] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
 #############################################################################################################################
+
+#ES configuration
+ES_key = cp.options(sections[4])
+ES_config = []
+for temp in ES_key:
+    ES_config.append(cp.get('ES_config',temp))
