@@ -29,13 +29,11 @@ def run(delta,entertime):
     #print startTime
     while True:
         print 'The next start time :',startTime
-        while datetime.datetime.now() < startTime:
+        if datetime.datetime.now() < startTime:
             minus_time = startTime - datetime.datetime.now()
             sleep_time = minus_time.days*86400+minus_time.seconds
-            #print 'beginTime',beginTime
-            #print 'startTime',startTime
+            # print sleep_time
             time.sleep(sleep_time)
-            #beginTime = beginTime+second
 
         storeDate = datetime.datetime.now().strftime('%Y-%m-%d')
         blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+storeDate+".json"
