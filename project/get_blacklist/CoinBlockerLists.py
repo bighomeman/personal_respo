@@ -19,8 +19,11 @@ def CoinBlockerLists():
 		}
 	return domain_dict
 
-if __name__ == '__main__':
+def main():
 	# print json.dumps(CoinBlockerLists(),indent=4)
 	dict = CoinBlockerLists()
 	store_json(dict,'CoinBlockerLists')
+
+# if __name__ == '__main__':
+# 	main()
 	

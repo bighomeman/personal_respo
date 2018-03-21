@@ -1,0 +1,7 @@
+############################################################################
+#  This is a blacklist which contains dns name we collected by ourselves.  #
+#  Last update time is 2018-03-15.                                         #
+#  The format of this list:                                                #
+#  domain	add date	type	false positive	source	status             #
+############################################################################
+
