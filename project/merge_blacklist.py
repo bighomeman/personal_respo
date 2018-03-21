@@ -24,6 +24,7 @@ def merge_blacklist(dir,date,name):
             merge_result = result
         else:
             merge_result = update_dict(result,merge_result)
+	i = i + 1
     saveAsJSON(date,merge_result,dir,name)
 
     for file_name in parse_blacklist:
