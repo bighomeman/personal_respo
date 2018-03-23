@@ -51,7 +51,7 @@ def judge_date(str1,str2):
 def update_dict(dict1,dict2):
 	# 合并两个字典
 	domain_insection = set(dict1.keys()) & set(dict2.keys())
-	print domain_insection
+	# print domain_insection
 	ret_dict = dict(dict1,**dict2)
 	if domain_insection:
 		for domain in domain_insection:
@@ -75,8 +75,8 @@ def saveAsJSON(date,dict1,path,name):
 	try:
 		with open(file_name,'w') as f:
 			f.write(json.dumps(dict1))
-	except IOError:
-		print 'Error'
+	except IOError as e:
+		raise e
 
 
 
@@ -87,8 +87,8 @@ def load_dict(filedir):
 			dict1=json.loads(f.read())
 			# print dict1
 			return dict1
-	except IOError:
-		print 'Error'
+	except IOError as e:
+		raise e
 
 def insert(Trie,element):
 	# 将element插入Trie

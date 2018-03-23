@@ -5,7 +5,7 @@ from elasticsearch import Elasticsearch
 import json
 import datetime,sys,os
 from blacklist_tools import load_dict,judge_level
-from parser_config import trie_store_path,source_store_path,ES_config
+from parser_config import trie_store_path,source_store_path,ES_config,logger_info,logger_error
 
 class ESclient(object):
 	def __init__(self):
@@ -119,27 +119,37 @@ def main(gte,lte,timestamp):
 		blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+str(time[0])+".json"
 		count += 1
 	if count == 30:
-		print "[ERROR] No blacklist data in last 30 days "
+		logger_error.error('No blacklist data in last 30 days.')
 		return 1
 	es = ESclient()
-	search_result = es.get_es_domain(gte,lte)
+	try:
+		logger_info.info('Getting ES DNS domain completed.')
+		search_result = es.get_es_domain(gte,lte)
+		logger_info.info('Get ES DNS domain completed.')
+	except Exception as e:
+		logger_error.error("Get ES DNS domain failed.\n{0}".format(e))
+	
 	split_DNSList = get_split_DNSList(search_result)
 
 	blacklist_Trie = load_dict(blacklist_Trie_dir)
 	match_DNSList,match_blacklist = find_match_DNS(blacklist_Trie,split_DNSList)
 	# print match_DNSList
 	# print match_blacklist
-
+	logger_info.info('Match DNS list :\n{0}'.format(match_DNSList))
+	logger_info.info('Match DNS blacklist :\n{0}'.format(match_blacklist))
 	# 匹配的DNS回插到es
 	if match_DNSList:
-		blacklist = load_dict(blacklist_dir)
-		for i in range(len(match_blacklist)):
-			domain = u'{}'.format('.'.join(match_blacklist[i]))
-			doc = blacklist[domain]
-			doc['domain'] = '.'.join(match_DNSList[i])
-			doc['@timestamp'] = timestamp
-			doc['level'] = judge_level(fp=doc['false_positive'],status=doc['status'])
-			es.es_index(doc)
+		try:
+			blacklist = load_dict(blacklist_dir)
+			for i in range(len(match_blacklist)):
+				domain = u'{}'.format('.'.join(match_blacklist[i]))
+				doc = blacklist[domain]
+				doc['domain'] = '.'.join(match_DNSList[i])
+				doc['@timestamp'] = timestamp
+				doc['level'] = judge_level(fp=doc['false_positive'],status=doc['status'])
+				es.es_index(doc)
+		except Exception as e:
+			logger_error.error("Insert the alert of theat DNS to ES failed.\n{0}".format(e))
 
 
 # if __name__ == '__main__':
