@@ -61,6 +61,67 @@ class ESclient(object):
 		# print search_result
 		return search_result
 
+	def get_domain_info(self,gte,lte,domain):
+		#反查可疑domain的sip、answer
+		search_option={
+			"size": 0,
+			"query": {
+				"bool": {
+					"must": [
+						{
+							"query_string": {
+							"query": "domain:{0} AND isresponse:1".format(domain),
+							'analyze_wildcard': True
+							}
+						},
+						{
+							"range": {
+							"@timestamp": {
+								"gte": gte,
+								"lte": lte,
+								"format": "yyyy-MM-dd HH:mm:ss",
+								"time_zone": "+08:00"
+								}
+							}
+						}
+					],
+					"must_not": []
+				}
+			},
+			"_source": {
+				"excludes": []
+			},
+			"aggs": {
+				"sip": {
+					"terms": {
+						"field": "sip",
+						"size": 50000,
+						"order": {
+							"_count": "desc"
+						}
+					},
+					"aggs": {
+						"answer": {
+							"terms": {
+								"field": "answer",
+								"size": 50,
+								"order": {
+									"_count": "desc"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		search_result=self.__es_client.search(
+			index='dns-*',
+			body=search_option
+			)
+		# print json.dumps(search_result,indent=4)
+		return search_result
+
 	def es_index(self,doc):
 		# 数据回插es的alert-*索引
 		ret = self.__es_client.index(
@@ -100,9 +161,18 @@ def find_match_DNS(Trie,split_DNSList):
 def get_split_DNSList(search_result):
 	# 清洗es获得的数据
 	split_DNSList=[]
-	for item in search_result[u'aggregations'][u'domainMD']['buckets']:
+	for item in search_result[u'aggregations'][u'domainMD'][u'buckets']:
 		split_DNSList.append(item[u'key'].encode('unicode-escape').split('.'))
 	return split_DNSList
+
+def get_sip_answer_list(search_result):
+	sip_answer_list = []
+	for sip_bucket in search_result[u'aggregations'][u'sip'][u'buckets']:
+		for answer_bucket in sip_bucket[u'answer'][u'buckets']:
+			sip_answer = [sip_bucket[u'key'].encode('unicode-escape'),answer_bucket[u'key'].encode('unicode-escape')]
+			sip_answer_list.append(sip_answer)
+	return sip_answer_list
+
 
 def main(gte,lte,timestamp):
 	time=lte.split(" ")
@@ -147,13 +217,16 @@ def main(gte,lte,timestamp):
 				doc['domain'] = '.'.join(match_DNSList[i])
 				doc['@timestamp'] = timestamp
 				doc['level'] = judge_level(fp=doc['false_positive'],status=doc['status'])
-				es.es_index(doc)
+				search_result = es.get_domain_info(gte,lte,domain)
+				sip_answer_list = get_sip_answer_list(search_result)
+				for sip_answer in sip_answer_list:
+					doc['sip'] = sip_answer[0]
+					doc['answer'] = sip_answer[1]
+					es.es_index(doc)
+					# print doc
 		except Exception as e:
 			logger_error.error("Insert the alert of theat DNS to ES failed.\n{0}".format(e))
 
 
 # if __name__ == '__main__':
-# 	if len(sys.argv)>3:
-# 		main(sys.argv[1],sys.argv[2],sys.argv[3])
-# 	else:
-# 		print '[ERROR] Insufficient number of input parameters'
+# 	main()
