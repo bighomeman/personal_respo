@@ -7,22 +7,10 @@ import json
 def judge_level(fp,status):
 	# 根据fp、status判断level
 	if status == 'online':
-		if fp == 'high':
-			return 'WARNING'
-		else:
-			return 'CRITICAL'
-	elif status == 'unknown':
 		if fp == 'low':
-			return 'CRITICAL'
-		elif fp == 'high':
-			return 'INFO'
-		else:
 			return 'WARNING'
 	else:
-		if fp == 'low' or fp == 'unknown':
-			return 'WARNING'
-		else:
-			return 'INFO'
+		return 'INFO'
 
 
 def judge_unknown(str1,str2):
