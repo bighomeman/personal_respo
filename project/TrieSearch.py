@@ -216,7 +216,7 @@ def main(gte,lte,timestamp):
 				doc = blacklist[domain]
 				doc['domain'] = '.'.join(match_DNSList[i])
 				doc['@timestamp'] = timestamp
-				doc['level'] = judge_level(fp=doc['false_positive'],status=doc['status'])
+				doc['level'] = judge_level(fp=doc.get('false_positive'),status=doc.get('status'))
 				search_result = es.get_domain_info(gte,lte,domain)
 				sip_answer_list = get_sip_answer_list(search_result)
 				for sip_answer in sip_answer_list:

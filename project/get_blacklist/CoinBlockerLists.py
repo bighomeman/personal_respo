@@ -11,11 +11,8 @@ def CoinBlockerLists():
 	domain_dict = {}
 	for domain in data:
 		domain_dict[domain] = {
-		'type':'coinMiner',
-		'status':'unknown',
-		'false_positive':'unknown',
-		'source':'https://zerodot1.github.io/CoinBlockerLists/',
-		'date':datetime.datetime.now().strftime('%Y-%m-%d')
+		'type':'coin_miner',
+		'source':'https://zerodot1.github.io/CoinBlockerLists/'
 		}
 	return domain_dict
 

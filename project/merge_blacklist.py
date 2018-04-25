@@ -13,7 +13,7 @@ def get_blacklist_module():
         logger_info.info('Downloading {0}.'.format(file_name))
         try:
             module.main()
-            logger_info.info('Download {0} all completed.'.format(file_name))
+            logger_info.info('Download {0} completed.'.format(file_name))
         except Exception as e:
             logger_error.error('Download {0} failed.'.format(file_name))
         
@@ -24,11 +24,13 @@ def merge_blacklist(dir,date,name):
     merge_result = {}
     for file_name in parse_blacklist:
         result = load_dict(file_name + '.json')
+        # print len(result)
         if i ==0:
             merge_result = result
         else:
             merge_result = update_dict(result,merge_result)
-	i = i + 1
+        i = i + 1
+        # print len(merge_result)
     saveAsJSON(date,merge_result,dir,name)
 
     for file_name in parse_blacklist:
