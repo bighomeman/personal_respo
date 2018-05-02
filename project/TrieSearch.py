@@ -4,7 +4,7 @@
 from elasticsearch import Elasticsearch
 import json
 import datetime,sys,os
-from blacklist_tools import load_dict,judge_level
+from blacklist_tools import load_dict
 from parser_config import trie_store_path,source_store_path,ES_config,logger_info,logger_error
 
 class ESclient(object):
@@ -218,7 +218,7 @@ def main(gte,lte,timestamp):
 				doc['domain'] = domain_es
 				doc['match_domain'] = domain
 				doc['@timestamp'] = timestamp
-				doc['level'] = judge_level(fp=doc.get('false_positive'),status=doc.get('status'))
+				doc['level'] = "INFO"
 				search_result = es.get_domain_info(gte,lte,domain_es)
 				sip_answer_list = get_sip_answer_list(search_result)
 				for sip_answer in sip_answer_list:
