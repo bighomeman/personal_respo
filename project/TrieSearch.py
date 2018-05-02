@@ -213,11 +213,13 @@ def main(gte,lte,timestamp):
 			blacklist = load_dict(blacklist_dir)
 			for i in range(len(match_blacklist)):
 				domain = u'{}'.format('.'.join(match_blacklist[i]))
+				domain_es = '.'.join(match_DNSList[i])
 				doc = blacklist[domain]
-				doc['domain'] = '.'.join(match_DNSList[i])
+				doc['domain'] = domain_es
+				doc['match_domain'] = domain
 				doc['@timestamp'] = timestamp
 				doc['level'] = judge_level(fp=doc.get('false_positive'),status=doc.get('status'))
-				search_result = es.get_domain_info(gte,lte,domain)
+				search_result = es.get_domain_info(gte,lte,domain_es)
 				sip_answer_list = get_sip_answer_list(search_result)
 				for sip_answer in sip_answer_list:
 					doc['sip'] = sip_answer[0]
