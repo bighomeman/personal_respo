@@ -27,7 +27,7 @@ def ransomwaretracker(url = 'https://ransomwaretracker.abuse.ch/tracker/online/'
 		if not pattern_ip.findall(host):
 			domain_dict[host] = {
 			'maltype': 'ransomware',
-			'desc_maltype':td_list[1].span.get_text()+'/'+td_list[2].span.get_text(),
+			'desc_maltype':'[ransomware] '+td_list[1].span.get_text()+'/'+td_list[2].span.get_text(),
 			'status':'online',
 			'desc_subtype':'https://ransomwaretracker.abuse.ch/host/{}/'.format(host)
 			}

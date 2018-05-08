@@ -20,7 +20,7 @@ def urlhaus():
 		'url': new_term[2],
 		'status': new_term[3],
 		'maltype': 'malurl',
-		'desc_maltype': new_term[4]+'/'+new_term[5],
+		'desc_maltype':'[malurl] ' +new_term[4]+'/'+new_term[5],
 		'desc_subtype': new_term[6].replace('"',""),
 		}
 	# print json.dumps(domain_dict,indent=4)
