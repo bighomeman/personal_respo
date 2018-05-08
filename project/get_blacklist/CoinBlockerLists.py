@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import urllib2
 import datetime
 # import json
@@ -11,8 +14,9 @@ def CoinBlockerLists():
 	domain_dict = {}
 	for domain in data:
 		domain_dict[domain] = {
-		'type':'coin_miner',
-		'source':'https://zerodot1.github.io/CoinBlockerLists/'
+		'maltype':'coinminer',
+		'desc_maltype':unicode('挖矿机相关域名','utf-8'),
+		'desc_subtype':'https://zerodot1.github.io/CoinBlockerLists/'
 		}
 	return domain_dict
 

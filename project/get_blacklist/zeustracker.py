@@ -34,10 +34,10 @@ def zeustracker(url='https://zeustracker.abuse.ch/monitor.php?filter=all'):
 		td_list = tr.find_all('td')
 		host = td_list[2].get_text()
 		domain_dict[host] = {
-		'type':td_list[1].get_text(),
-		'subtype':tag[td_list[4].get_text()],
+		'maltype': "zeus",
+		'desc_maltype':td_list[1].get_text()+'/'+tag[td_list[4].get_text()],
 		'status':td_list[5].get_text(),
-		'source':'https://zeustracker.abuse.ch/monitor.php?host={}'.format(host)
+		'desc_subtype':'https://zeustracker.abuse.ch/monitor.php?host={}'.format(host)
 		}
 
 	return domain_dict

@@ -219,6 +219,9 @@ def main(gte,lte,timestamp):
 				doc['match_domain'] = domain
 				doc['@timestamp'] = timestamp
 				doc['level'] = "INFO"
+				doc['type'] = "DNS"
+				doc['subtype'] = "DOMAIN"
+				doc['desc_type'] = unicode("[DNS]可疑DOMAIN解析请求监控",'utf-8')
 				search_result = es.get_domain_info(gte,lte,domain_es)
 				sip_answer_list = get_sip_answer_list(search_result)
 				for sip_answer in sip_answer_list:

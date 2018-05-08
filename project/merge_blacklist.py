@@ -23,7 +23,10 @@ def merge_blacklist(dir,date,name):
     i = 0
     merge_result = {}
     for file_name in parse_blacklist:
-        result = load_dict(file_name + '.json')
+        if os.path.exists(file_name + '.json'):
+            result = load_dict(file_name + '.json')
+        else:
+            continue
         # print len(result)
         if i ==0:
             merge_result = result

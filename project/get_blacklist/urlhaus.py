@@ -19,9 +19,9 @@ def urlhaus():
 		domain_dict[host] = {
 		'url': new_term[2],
 		'status': new_term[3],
-		'type': new_term[4],
-		'subtype': new_term[5],
-		'source': new_term[6].replace('"',""),
+		'maltype': 'malurl',
+		'desc_maltype': new_term[4]+'/'+new_term[5],
+		'desc_subtype': new_term[6].replace('"',""),
 		}
 	# print json.dumps(domain_dict,indent=4)
 	return domain_dict
