@@ -175,18 +175,18 @@ def get_sip_answer_list(search_result):
 
 
 def main(gte,lte,timestamp):
-	time=lte.split(" ")
-	blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+str(time[0])+".json"
+	time=datetime.datetime.now().strftime('%Y-%m-%d')
+	blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+str(time)+".json"
 	# print blacklist_dir
-	blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+str(time[0])+".json"
+	blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+str(time)+".json"
 	# print blacklist_Trie_dir
 	count = 0
 	temp_time = datetime.datetime.strptime(lte,'%Y-%m-%d %H:%M:%S')
 	while (not (os.path.exists(blacklist_dir) and os.path.exists(blacklist_Trie_dir))) and count<30:
 		temp_time = temp_time + datetime.timedelta(days = -1)
 		time = temp_time.strftime('%Y-%m-%d %H:%M:%S').split(" ")
-		blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+str(time[0])+".json"
-		blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+str(time[0])+".json"
+		blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+str(time)+".json"
+		blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+str(time)+".json"
 		count += 1
 	if count == 30:
 		logger_error.error('No blacklist data in last 30 days.')
