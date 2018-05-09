@@ -14,9 +14,8 @@ def CoinBlockerLists():
 	domain_dict = {}
 	for domain in data:
 		domain_dict[domain] = {
-		'maltype':'coinminer',
-		'desc_maltype':unicode('[coinminer]挖矿机相关域名','utf-8'),
-		'desc_subtype':'https://zerodot1.github.io/CoinBlockerLists/'
+		'subtype':'COIN_MINER',
+		'source':'https://zerodot1.github.io/CoinBlockerLists/'
 		}
 	return domain_dict
 

@@ -215,13 +215,13 @@ def main(gte,lte,timestamp):
 				domain = u'{}'.format('.'.join(match_blacklist[i]))
 				domain_es = '.'.join(match_DNSList[i])
 				doc = blacklist[domain]
+				source = doc.pop("source")
 				doc['domain'] = domain_es
-				doc['match_domain'] = domain
 				doc['@timestamp'] = timestamp
 				doc['level'] = "INFO"
-				doc['type'] = "DNS"
-				doc['subtype'] = "DOMAIN"
-				doc['desc_type'] = unicode("[DNS]可疑DOMAIN解析请求监控",'utf-8')
+				doc['type'] = "MAL_DNS"
+				doc['desc_type'] = "[MAL_DNS] Request of Malicious Domain Name Detection"
+				doc['desc_subtype'] = "[{0}] Match the domain name : {1} and data source : {2} .".format(doc['subtype'],domain,source)
 				search_result = es.get_domain_info(gte,lte,domain_es)
 				sip_answer_list = get_sip_answer_list(search_result)
 				for sip_answer in sip_answer_list:
