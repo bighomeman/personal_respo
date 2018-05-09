@@ -4,7 +4,7 @@
 from elasticsearch import Elasticsearch
 import json
 import datetime,sys,os
-from blacklist_tools import load_dict,judge_level
+from blacklist_tools import load_dict
 from parser_config import trie_store_path,source_store_path,ES_config,logger_info,logger_error
 
 class ESclient(object):
@@ -175,18 +175,18 @@ def get_sip_answer_list(search_result):
 
 
 def main(gte,lte,timestamp):
-	time=lte.split(" ")
-	blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+str(time[0])+".json"
+	time=datetime.datetime.now().strftime('%Y-%m-%d')
+	blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+str(time)+".json"
 	# print blacklist_dir
-	blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+str(time[0])+".json"
+	blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+str(time)+".json"
 	# print blacklist_Trie_dir
 	count = 0
 	temp_time = datetime.datetime.strptime(lte,'%Y-%m-%d %H:%M:%S')
 	while (not (os.path.exists(blacklist_dir) and os.path.exists(blacklist_Trie_dir))) and count<30:
 		temp_time = temp_time + datetime.timedelta(days = -1)
 		time = temp_time.strftime('%Y-%m-%d %H:%M:%S').split(" ")
-		blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+str(time[0])+".json"
-		blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+str(time[0])+".json"
+		blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+str(time)+".json"
+		blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+str(time)+".json"
 		count += 1
 	if count == 30:
 		logger_error.error('No blacklist data in last 30 days.')
@@ -213,11 +213,16 @@ def main(gte,lte,timestamp):
 			blacklist = load_dict(blacklist_dir)
 			for i in range(len(match_blacklist)):
 				domain = u'{}'.format('.'.join(match_blacklist[i]))
+				domain_es = '.'.join(match_DNSList[i])
 				doc = blacklist[domain]
-				doc['domain'] = '.'.join(match_DNSList[i])
+				doc['domain'] = domain_es
+				doc['match_domain'] = domain
 				doc['@timestamp'] = timestamp
-				doc['level'] = judge_level(fp=doc.get('false_positive'),status=doc.get('status'))
-				search_result = es.get_domain_info(gte,lte,domain)
+				doc['level'] = "INFO"
+				doc['type'] = "DNS"
+				doc['subtype'] = "DOMAIN"
+				doc['desc_type'] = unicode("[DNS]可疑DOMAIN解析请求监控",'utf-8')
+				search_result = es.get_domain_info(gte,lte,domain_es)
 				sip_answer_list = get_sip_answer_list(search_result)
 				for sip_answer in sip_answer_list:
 					doc['sip'] = sip_answer[0]

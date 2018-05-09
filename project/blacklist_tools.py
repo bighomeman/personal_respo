@@ -4,14 +4,14 @@
 import datetime
 import json
 
-def judge_level(fp,status):
-	# 根据fp、status判断level
-	if status:
-		if fp:
-			if status == 'online':
-				if fp == 'low':
-					return 'WARNING'
-	return 'INFO'
+# def judge_level(fp,status):
+# 	# 根据fp、status判断level
+# 	if status:
+# 		if fp:
+# 			if status == 'online':
+# 				if fp == 'low':
+# 					return 'WARNING'
+# 	return 'INFO'
 
 
 # def judge_unknown(str1,str2):
