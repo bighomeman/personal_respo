@@ -221,7 +221,7 @@ def main(gte,lte,timestamp):
 				doc['level'] = "INFO"
 				doc['type'] = "MAL_DNS"
 				doc['desc_type'] = "[MAL_DNS] Request of Malicious Domain Name Detection"
-				doc['desc_subtype'] = "[{0}] domain : {1} AND source : {2} .".format(doc['subtype'],domain,source)
+				doc['desc_subtype'] = "[{0}] domain:{1} AND source:{2}".format(doc['subtype'],domain,source)
 				search_result = es.get_domain_info(gte,lte,domain_es)
 				sip_answer_list = get_sip_answer_list(search_result)
 				for sip_answer in sip_answer_list:
