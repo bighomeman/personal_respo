@@ -11,7 +11,7 @@ class ESclient(object):
 	def __init__(self):
 		self.__es_client=Elasticsearch([{'host':ES_config[0],'port':ES_config[1]}])
 
-	def get_es_domain(self,gte,lte):
+	def get_es_domain(self,gte,lte,time_zone):
 		# 获取es的dns-*索引的domain
 		search_option={
 			"size": 0,
@@ -30,7 +30,7 @@ class ESclient(object):
 								"gte": gte,
 								"lte": lte,
 								"format": "yyyy-MM-dd HH:mm:ss",
-								"time_zone": "+08:00"
+								"time_zone": time_zone
 								}
 							}
 						}
@@ -61,7 +61,7 @@ class ESclient(object):
 		# print search_result
 		return search_result
 
-	def get_domain_info(self,gte,lte,domain):
+	def get_domain_info(self,gte,lte,domain,time_zone):
 		#反查可疑domain的sip、answer
 		search_option={
 			"size": 0,
@@ -80,7 +80,7 @@ class ESclient(object):
 								"gte": gte,
 								"lte": lte,
 								"format": "yyyy-MM-dd HH:mm:ss",
-								"time_zone": "+08:00"
+								"time_zone": time_zone
 								}
 							}
 						}
@@ -174,7 +174,7 @@ def get_sip_answer_list(search_result):
 	return sip_answer_list
 
 
-def main(gte,lte,timestamp):
+def main(gte,lte,timestamp,time_zone):
 	time=datetime.datetime.now().strftime('%Y-%m-%d')
 	blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+str(time)+".json"
 	# print blacklist_dir
@@ -194,7 +194,7 @@ def main(gte,lte,timestamp):
 	es = ESclient()
 	try:
 		logger_info.info('Getting ES DNS domain completed.')
-		search_result = es.get_es_domain(gte,lte)
+		search_result = es.get_es_domain(gte=gte,lte=lte,time_zone=time_zone)
 		logger_info.info('Get ES DNS domain completed.')
 	except Exception as e:
 		logger_error.error("Get ES DNS domain failed.\n{0}".format(e))
@@ -221,7 +221,7 @@ def main(gte,lte,timestamp):
 				doc['type'] = "MAL_DNS"
 				doc['desc_type'] = "[MAL_DNS] Request of Malicious Domain Name Detection"
 				doc['desc_subtype'] = "[{0}] Malicious domain name:{1}".format(doc['subtype'],domain)
-				search_result = es.get_domain_info(gte,lte,domain_es)
+				search_result = es.get_domain_info(gte=gte,lte=lte,domain=domain_es,time_zone=time_zone)
 				sip_answer_list = get_sip_answer_list(search_result)
 				for sip_answer in sip_answer_list:
 					doc['sip'] = sip_answer[0]

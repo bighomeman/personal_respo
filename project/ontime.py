@@ -47,9 +47,15 @@ def run(delta,entertime):
             # execute the command
             gte = (startTime-delta).strftime('%Y-%m-%d %H:%M:%S')
             lte = (startTime).strftime('%Y-%m-%d %H:%M:%S')
-            timestamp = (startTime).strftime('%Y-%m-%dT%H:%M:%S.%f')+"+08:00"
 
-            TrieSearch.main(gte,lte,timestamp)
+            if time.daylight == 0:
+                time_zone = "%+03d:%02d" % (-(time.timezone/3600),time.timezone%3600/3600.0*60)
+            else:
+                time_zone = "%+03d:%02d" % (-(time.altzone/3600),time.altzone%3600/3600.0*60)
+
+            timestamp = (startTime).strftime('%Y-%m-%dT%H:%M:%S.%f')+time_zone
+
+            TrieSearch.main(gte,lte,timestamp,time_zone)
 
             # command = r'python TrieSearch.py "%s" "%s" "%s"' %(gte,lte,timestamp)
             # status = os.system(command)
