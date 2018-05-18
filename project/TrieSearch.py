@@ -4,8 +4,8 @@
 from elasticsearch import Elasticsearch
 import json
 import datetime,sys,os
-from blacklist_tools import load_dict
-from parser_config import trie_store_path,source_store_path,ES_config,logger_info,logger_error
+from blacklist_tools import load_dict,create_Trie
+from configuration import data_path,ES_config,logger_info,logger_error
 
 class ESclient(object):
 	def __init__(self):
@@ -45,7 +45,7 @@ class ESclient(object):
 				"domainMD": {
 					"terms": {
 						"field": "domain",
-						"size": ES_config[2],
+						"size": 50000,
 						"order": {
 						"_count": "desc"
 						}
@@ -173,20 +173,39 @@ def get_sip_answer_list(search_result):
 			sip_answer_list.append(sip_answer)
 	return sip_answer_list
 
+def check_whitelist(match_DNSList,match_blacklist):
+	try:
+		with open("./data/local_Whitelist.txt",'r') as f:
+			text = f.read().split('\n')[6:-1]
+	except Exception as e:
+		logger_error.error("Get whitelist failed.\n{0}".format(e))
+	split_DNSList = []
+	for domain in text:
+		split_DNSList.append(domain.split('.'))
+	white_Trie = create_Trie(split_DNSList)
+	ret_DNSList = []
+	ret_blacklist = []
+	for i in range(len(match_DNSList)):
+		if not isMatch(white_Trie,match_DNSList[i],domain =[]):
+			ret_DNSList.append(match_DNSList[i])
+			ret_blacklist.append(match_blacklist[i])
+	return ret_DNSList,ret_blacklist
+	
+
 
 def main(gte,lte,timestamp,time_zone):
 	time=datetime.datetime.now().strftime('%Y-%m-%d')
-	blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+str(time)+".json"
+	blacklist_dir = data_path+'source'+'-'+str(time)+".json"
 	# print blacklist_dir
-	blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+str(time)+".json"
+	blacklist_Trie_dir = data_path+'trie'+'-'+str(time)+".json"
 	# print blacklist_Trie_dir
 	count = 0
 	temp_time = datetime.datetime.strptime(lte,'%Y-%m-%d %H:%M:%S')
 	while (not (os.path.exists(blacklist_dir) and os.path.exists(blacklist_Trie_dir))) and count<30:
 		temp_time = temp_time + datetime.timedelta(days = -1)
 		time = temp_time.strftime('%Y-%m-%d %H:%M:%S').split(" ")
-		blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+str(time)+".json"
-		blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+str(time)+".json"
+		blacklist_dir = data_path+'source'+'-'+str(time)+".json"
+		blacklist_Trie_dir = data_path+'trie'+'-'+str(time)+".json"
 		count += 1
 	if count == 30:
 		logger_error.error('No blacklist data in last 30 days.')
@@ -203,8 +222,7 @@ def main(gte,lte,timestamp,time_zone):
 
 	blacklist_Trie = load_dict(blacklist_Trie_dir)
 	match_DNSList,match_blacklist = find_match_DNS(blacklist_Trie,split_DNSList)
-	# print match_DNSList
-	# print match_blacklist
+	match_DNSList,match_blacklist = check_whitelist(match_DNSList,match_blacklist)
 	logger_info.info('Match DNS list :\n{0}'.format(match_DNSList))
 	logger_info.info('Match DNS blacklist :\n{0}'.format(match_blacklist))
 	# 匹配的DNS回插到es
@@ -232,5 +250,6 @@ def main(gte,lte,timestamp,time_zone):
 			logger_error.error("Insert the alert of theat DNS to ES failed.\n{0}".format(e))
 
 
-# if __name__ == '__main__':
-# 	main()
+if __name__ == '__main__':
+	# main()
+	pass

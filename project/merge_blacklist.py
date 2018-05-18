@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os,sys
 from blacklist_tools import *
-from parser_config import source_store_path,trie_store_path,moudle_name,logger_info,logger_error
+from configuration import data_path,moudle_name,logger_info,logger_error
 
 sys.dont_write_bytecode = True
 
@@ -43,23 +43,15 @@ def merge_blacklist(dir,date,name):
 #建Trie树
 
 def store_trie(dir, date, name):
-    path = source_store_path[1] + source_store_path[0] + "-" +date + '.json'
+    path = data_path + 'source' + "-" +date + '.json'
     result = load_dict(path)
     # print result
     saveAsJSON(date,create_Trie([x.split('.') for x in result.keys()]),dir,name)
 
 def main(storeDate):
     get_blacklist_module()
-    merge_blacklist(source_store_path[1],storeDate,source_store_path[0])
-    store_trie(trie_store_path[1],storeDate,trie_store_path[0])
+    merge_blacklist(data_path,storeDate,'source')
+    store_trie(data_path,storeDate,'trie')
 
-
-# if __name__ == '__main__':
-#     if len(sys.argv)>1:
-#         get_blacklist_module()
-#         merge_blacklist(source_store_path[1],sys.argv[1],source_store_path[0])
-#         store_trie(trie_store_path[1],sys.argv[1],trie_store_path[0])
-#     else:
-#         print '[ERROR] Insufficient number of input parameters'
 
 

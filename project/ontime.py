@@ -3,7 +3,7 @@
 import os
 import time
 import datetime
-from parser_config import trie_store_path,source_store_path,frequency,logger_info,logger_error
+from configuration import data_path,frequency,logger_info,logger_error
 import TrieSearch,merge_blacklist
 
 
@@ -34,9 +34,9 @@ def run(delta,entertime):
             time.sleep(sleep_time)
 
         storeDate = datetime.datetime.now().strftime('%Y-%m-%d')
-        blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+storeDate+".json"
+        blacklist_dir = data_path+'source'+'-'+storeDate+".json"
         # print blacklist_dir
-        blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+storeDate+".json"
+        blacklist_Trie_dir = data_path+'trie'+'-'+storeDate+".json"
         # print blacklist_Trie_dir
 
         if not (os.path.exists(blacklist_dir) and os.path.exists(blacklist_Trie_dir)):
