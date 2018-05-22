@@ -5,7 +5,10 @@ from elasticsearch import Elasticsearch
 import json
 import datetime,sys,os
 from blacklist_tools import load_dict,create_Trie
-from configuration import data_path,ES_config,logger_info,logger_error
+from configuration import set_data_path,get_es_config,logger_info,logger_error
+
+data_path = set_data_path()
+ES_config = get_es_config()
 
 class ESclient(object):
 	def __init__(self):
@@ -195,17 +198,17 @@ def check_whitelist(match_DNSList,match_blacklist):
 
 def main(gte,lte,timestamp,time_zone):
 	time=datetime.datetime.now().strftime('%Y-%m-%d')
-	blacklist_dir = data_path+'source'+'-'+str(time)+".json"
+	blacklist_dir = os.path.join(data_path,'source'+'-'+str(time)+".json")
 	# print blacklist_dir
-	blacklist_Trie_dir = data_path+'trie'+'-'+str(time)+".json"
+	blacklist_Trie_dir = os.path.join(data_path,'trie'+'-'+str(time)+".json")
 	# print blacklist_Trie_dir
 	count = 0
 	temp_time = datetime.datetime.strptime(lte,'%Y-%m-%d %H:%M:%S')
 	while (not (os.path.exists(blacklist_dir) and os.path.exists(blacklist_Trie_dir))) and count<30:
 		temp_time = temp_time + datetime.timedelta(days = -1)
 		time = temp_time.strftime('%Y-%m-%d %H:%M:%S').split(" ")
-		blacklist_dir = data_path+'source'+'-'+str(time)+".json"
-		blacklist_Trie_dir = data_path+'trie'+'-'+str(time)+".json"
+		blacklist_dir = os.path.join(data_path,'source'+'-'+str(time)+".json")
+		blacklist_Trie_dir = os.path.join(data_path,'trie'+'-'+str(time)+".json")
 		count += 1
 	if count == 30:
 		logger_error.error('No blacklist data in last 30 days.')

@@ -3,9 +3,11 @@
 import os
 import time
 import datetime
-from configuration import data_path,frequency,logger_info,logger_error
+from configuration import set_data_path,set_frequency,logger_info,logger_error
 import TrieSearch,merge_blacklist
 
+data_path = set_data_path()
+frequency = set_frequency()
 
 def store_run(storeDate):
     try:
@@ -34,9 +36,9 @@ def run(delta,entertime):
             time.sleep(sleep_time)
 
         storeDate = datetime.datetime.now().strftime('%Y-%m-%d')
-        blacklist_dir = data_path+'source'+'-'+storeDate+".json"
+        blacklist_dir = os.path.join(data_path,'source'+'-'+storeDate+".json")
         # print blacklist_dir
-        blacklist_Trie_dir = data_path+'trie'+'-'+storeDate+".json"
+        blacklist_Trie_dir = os.path.join(data_path,'trie'+'-'+storeDate+".json")
         # print blacklist_Trie_dir
 
         if not (os.path.exists(blacklist_dir) and os.path.exists(blacklist_Trie_dir)):

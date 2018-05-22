@@ -1,15 +1,15 @@
 import ConfigParser
-import re,datetime,platform
+import re,datetime,platform,os
 import logging
 
 cp = ConfigParser.SafeConfigParser()
-cp.read("configuration.conf")
+cp.read(os.path.join(os.path.split(__file__)[0],"configuration.conf"))
 
 def platform_detection():
     pattern_platform = re.compile("^[^-]*")
     loc_platform = pattern_platform.findall(platform.platform())
     return loc_platform[0]
-pf = platform_detection()
+# print platform_detection()
 
 #############################################################################################################################        
     
@@ -24,34 +24,42 @@ def get_moudle_name():
         moudle_name.append(temp)
     return moudle_name
 
-moudle_name = get_moudle_name()
+# print get_moudle_name()
 
 #############################################################################################################################
 
 # Set store path .
 def set_data_path():
-    if pf == "Windows":
+    if platform_detection() == "Windows":
         data_path = cp.get("Windows_path","data_path")
+        if not os.path.isabs(data_path):
+            data_path = os.path.abspath(os.path.join(os.path.split(__file__)[0],data_path))
     else:
         data_path = cp.get("Linux_path","data_path")
+        if not os.path.isabs(data_path):
+            data_path = os.path.abspath(os.path.join(os.path.split(__file__)[0],data_path))
     return data_path
 
-data_path = set_data_path()
+# print set_data_path()
 
 #############################################################################################################################
 
 def set_logger():
-    if pf == "Windows":
+    if platform_detection() == "Windows":
         log_path = cp.get("Windows_path","log_path")
+        if not os.path.isabs(log_path):
+           log_path = os.path.abspath(os.path.join(os.path.split(__file__)[0],log_path))
     else:
         log_path = cp.get("Linux_path","log_path")
+        if not os.path.isabs(log_path):
+            log_path = os.path.abspath(os.path.join(os.path.split(__file__)[0],log_path))
     logger_info = logging.getLogger('DNS_logs')
     logger_error = logging.getLogger('DNS_logs.error')
     logger_info.setLevel(logging.INFO)
     logger_error.setLevel(logging.ERROR)
     # set logs file handler
-    main_logs_handler = logging.FileHandler(log_path+'theat_DNS.log')
-    error_logs_handler = logging.FileHandler(log_path+'theat_DNS-error.log')
+    main_logs_handler = logging.FileHandler(os.path.join(log_path,'theat_DNS.log'))
+    error_logs_handler = logging.FileHandler(os.path.join(log_path,'theat_DNS-error.log'))
     # set logs formatter
     formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
     main_logs_handler.setFormatter(formatter)
@@ -89,7 +97,7 @@ def set_frequency():
 
     return frequency
 
-frequency = set_frequency()
+# print set_frequency()
 
 #############################################################################################################################
 
@@ -101,7 +109,7 @@ def get_es_config():
         ES_config.append(cp.get('Elasticsearch',temp))
     return ES_config
 
-ES_config = get_es_config()
+# print get_es_config()
 
 ############################################################################################################################
 

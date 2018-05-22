@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import os,sys
 from blacklist_tools import *
-from configuration import data_path,moudle_name,logger_info,logger_error
+from configuration import set_data_path,get_moudle_name,logger_info,logger_error
+
+data_path = set_data_path()
+moudle_name = get_moudle_name()
 
 sys.dont_write_bytecode = True
 
@@ -18,7 +21,7 @@ def get_blacklist_module():
             logger_error.error('Download {0} failed.'.format(file_name))
         
 
-def merge_blacklist(dir,date,name):
+def merge_blacklist(date,name):
     parse_blacklist = moudle_name
     i = 0
     merge_result = {}
@@ -34,7 +37,7 @@ def merge_blacklist(dir,date,name):
             merge_result = update_dict(result,merge_result)
         i = i + 1
         # print len(merge_result)
-    saveAsJSON(date,merge_result,dir,name)
+    saveAsJSON(date,merge_result,data_path,name)
 
     for file_name in parse_blacklist:
         if os.path.exists(file_name+'.json'):
@@ -42,16 +45,16 @@ def merge_blacklist(dir,date,name):
 
 #建Trie树
 
-def store_trie(dir, date, name):
-    path = data_path + 'source' + "-" +date + '.json'
+def store_trie(date, name):
+    path = os.path.join(data_path , 'source' + "-" +date + '.json')
     result = load_dict(path)
     # print result
-    saveAsJSON(date,create_Trie([x.split('.') for x in result.keys()]),dir,name)
+    saveAsJSON(date,create_Trie([x.split('.') for x in result.keys()]),data_path,name)
 
 def main(storeDate):
     get_blacklist_module()
-    merge_blacklist(data_path,storeDate,'source')
-    store_trie(data_path,storeDate,'trie')
+    merge_blacklist(storeDate,'source')
+    store_trie(storeDate,'trie')
 
 
 

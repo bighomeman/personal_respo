@@ -3,6 +3,7 @@
 
 import datetime
 import json
+import os
 
 # def judge_level(fp,status):
 # 	# 根据fp、status判断level
@@ -60,7 +61,7 @@ def update_dict(dict1,dict2):
 
 def saveAsJSON(date,dict1,path,name):
 	# 保存为json
-	file_name = path + name + '-' + str(date) + '.json'
+	file_name = os.path.join(path , name + '-' + str(date) + '.json')
 	try:
 		with open(file_name,'w') as f:
 			f.write(json.dumps(dict1))
