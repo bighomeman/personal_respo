@@ -178,7 +178,7 @@ def get_sip_answer_list(search_result):
 
 def check_whitelist(match_DNSList,match_blacklist):
 	try:
-		with open("./data/local_Whitelist.txt",'r') as f:
+		with open(os.path.join(data_path,"./data/local_Whitelist.txt"),'r') as f:
 			text = f.read().split('\n')[6:-1]
 	except Exception as e:
 		logger_error.error("Get whitelist failed.\n{0}".format(e))
