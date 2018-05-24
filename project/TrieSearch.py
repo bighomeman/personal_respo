@@ -45,12 +45,12 @@ class ESclient(object):
 				"excludes": []
 			},
 			"aggs": {
-				"domainMD": {
+				"domain": {
 					"terms": {
 						"field": "domain",
 						"size": 50000,
 						"order": {
-						"_count": "desc"
+							"_count": "desc"
 						}
 					}
 				}
@@ -164,7 +164,7 @@ def find_match_DNS(Trie,split_DNSList):
 def get_split_DNSList(search_result):
 	# 清洗es获得的数据
 	split_DNSList=[]
-	for item in search_result[u'aggregations'][u'domainMD'][u'buckets']:
+	for item in search_result[u'aggregations'][u'domain'][u'buckets']:
 		split_DNSList.append(item[u'key'].encode('unicode-escape').split('.'))
 	return split_DNSList
 
@@ -178,7 +178,7 @@ def get_sip_answer_list(search_result):
 
 def check_whitelist(match_DNSList,match_blacklist):
 	try:
-		with open(os.path.join(data_path,"./data/local_Whitelist.txt"),'r') as f:
+		with open(os.path.join(data_path,"local_Whitelist.txt"),'r') as f:
 			text = f.read().split('\n')[6:-1]
 	except Exception as e:
 		logger_error.error("Get whitelist failed.\n{0}".format(e))
