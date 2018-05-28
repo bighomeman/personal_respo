@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 
 from elasticsearch import Elasticsearch
-import json
+import json,re
 import datetime,sys,os
 from blacklist_tools import load_dict,create_Trie
 from configuration import set_data_path,get_es_config,logger_info,logger_error
+import Second_Check
 
 data_path = set_data_path()
 ES_config = get_es_config()
@@ -113,6 +114,9 @@ class ESclient(object):
 			)
 		# print json.dumps(search_result,indent=4)
 		return search_result
+	
+	def second_check(self,gte,lte,time_zone,dip):
+		return Second_Check.main(es=self.__es_client,gte=gte,lte=lte,time_zone=time_zone,dip=dip)
 
 	def es_index(self,doc):
 		# 数据回插es的alert-*索引
@@ -218,6 +222,8 @@ def main(gte,lte,timestamp,time_zone):
 	logger_info.info('Match DNS blacklist :\n{0}'.format(match_blacklist))
 	# 匹配的DNS回插到es
 	if match_DNSList:
+		dip_list = []
+		ipv4_pattern = re.compile('^(?:25[0-5]|2[0-4]\d|[0-1]?\d?\d)(?:.(?:25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3}$')
 		try:
 			blacklist = load_dict(blacklist_dir)
 			for i in range(len(match_blacklist)):
@@ -232,13 +238,23 @@ def main(gte,lte,timestamp,time_zone):
 				doc['desc_subtype'] = "[{0}] Malicious domain name:{1}".format(doc['subtype'],domain)
 				search_result = es.get_domain_info(gte=gte,lte=lte,domain=domain_es,time_zone=time_zone)
 				answer_list = get_answer_list(search_result)
+				dip_list = dip_list + answer_list
 				for answer in answer_list:
 					doc['answer'] = answer
 					es.es_index(doc)
-					# print doc
+#					print doc
+					if ipv4_pattern.findall(answer):
+						temp_lte = datetime.datetime.strptime(lte,'%Y-%m-%d %H:%M:%S')
+						gt = (temp_lte - datetime.timedelta(hours = 24)).strftime('%Y-%m-%d %H:%M:%S')
+						sip_list = es.second_check(gte=gt,lte=lte,time_zone=time_zone,dip=answer)
+#						print sip_list
+						if sip_list:
+							for sip in sip_list:
+								doc["sip"] = sip
+								doc["level"] = "WARNING"
+								es.es_index(doc)
 		except Exception as e:
 			logger_error.error("Insert the alert of theat DNS to ES failed.\n{0}".format(e))
-
 
 # if __name__ == '__main__':
 # 	main()

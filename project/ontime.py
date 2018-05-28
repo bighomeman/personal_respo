@@ -20,7 +20,9 @@ def store_run(storeDate):
     except Exception, e:
         logger_error.error("Download failed.\n{0}".format(e))
 
-def run(delta,entertime):
+def run():
+    entertime = frequency[0]
+    delta = frequency[1]
 
     startTime = datetime.datetime.strptime(entertime, '%Y-%m-%d %H:%M:%S')
     #begin= '2017-05-24 23:59:57'
@@ -68,7 +70,4 @@ def run(delta,entertime):
             logger_error.error("Checking failed.\n{0}".format(e))
 
 if __name__=="__main__":
-    # entertime = '2018-03-15 15:30:00'
-    entertime = frequency[0]
-    delta = frequency[1]
-    run(delta = delta,entertime = entertime)
+    run()
