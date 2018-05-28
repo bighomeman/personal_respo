@@ -5,4 +5,4 @@
 #  domain source type             
 ############################################################################
 stratum_ltc.bw.com local COIN_MINER
- 
+toknowall.com https://blog.talosintelligence.com/2018/05/VPNFilter.html MALWARE
