@@ -65,7 +65,7 @@ class ESclient(object):
 		return search_result
 
 	def get_domain_info(self,gte,lte,domain,time_zone):
-		#反查可疑domain的sip、answer
+		#反查可疑domain的answer
 		search_option={
 			"size": 0,
 			"query": {
@@ -95,28 +95,17 @@ class ESclient(object):
 				"excludes": []
 			},
 			"aggs": {
-				"sip": {
-					"terms": {
-						"field": "sip",
-						"size": 50000,
-						"order": {
-							"_count": "desc"
-						}
-					},
-					"aggs": {
-						"answer": {
-							"terms": {
-								"field": "answer",
-								"size": 50,
-								"order": {
-									"_count": "desc"
-								}
+					"answer": {
+						"terms": {
+							"field": "answer",
+							"size": 50,
+							"order": {
+								"_count": "desc"
 							}
 						}
 					}
 				}
 			}
-		}
 
 		search_result=self.__es_client.search(
 			index='dns-*',
@@ -168,13 +157,12 @@ def get_split_DNSList(search_result):
 		split_DNSList.append(item[u'key'].encode('unicode-escape').split('.'))
 	return split_DNSList
 
-def get_sip_answer_list(search_result):
-	sip_answer_list = []
-	for sip_bucket in search_result[u'aggregations'][u'sip'][u'buckets']:
-		for answer_bucket in sip_bucket[u'answer'][u'buckets']:
-			sip_answer = [sip_bucket[u'key'].encode('unicode-escape'),answer_bucket[u'key'].encode('unicode-escape')]
-			sip_answer_list.append(sip_answer)
-	return sip_answer_list
+def get_answer_list(search_result):
+	answer_list = []
+	for answer_bucket in search_result[u'aggregations'][u'answer'][u'buckets']:
+		answer = answer_bucket[u'key'].encode('unicode-escape')
+		answer_list.append(answer)
+	return answer_list
 
 def check_whitelist(match_DNSList,match_blacklist):
 	try:
@@ -243,16 +231,14 @@ def main(gte,lte,timestamp,time_zone):
 				doc['desc_type'] = "[MAL_DNS] Request of Malicious Domain Name Detection"
 				doc['desc_subtype'] = "[{0}] Malicious domain name:{1}".format(doc['subtype'],domain)
 				search_result = es.get_domain_info(gte=gte,lte=lte,domain=domain_es,time_zone=time_zone)
-				sip_answer_list = get_sip_answer_list(search_result)
-				for sip_answer in sip_answer_list:
-					doc['sip'] = sip_answer[0]
-					doc['answer'] = sip_answer[1]
+				answer_list = get_answer_list(search_result)
+				for answer in answer_list:
+					doc['answer'] = answer
 					es.es_index(doc)
 					# print doc
 		except Exception as e:
 			logger_error.error("Insert the alert of theat DNS to ES failed.\n{0}".format(e))
 
 
-if __name__ == '__main__':
-	# main()
-	pass
+# if __name__ == '__main__':
+# 	main()
