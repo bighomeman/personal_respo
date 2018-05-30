@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-from elasticsearch import Elasticsearch
 import json
 
 def get_date_flow(es,gte,lte,time_zone,dip):
