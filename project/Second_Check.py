@@ -97,7 +97,7 @@ def main(es,gte,lte,time_zone,dip):
 #		print flowlist
 #		print calc_MAD(date_dev)
 #		print calc_MAD(flowlist)
-		if (calc_MAD(date_dev) <= 60000) and (calc_MAD(flowlist) == 0):
+		if (calc_MAD(date_dev) <= 60000) and (calc_MAD(flowlist) <= 1):
 			ret_siplist.append(sip_item["key"])
 	return ret_siplist		
 
