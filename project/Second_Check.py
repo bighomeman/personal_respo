@@ -88,7 +88,6 @@ def main(es,gte,lte,time_zone,dip):
 	for sip_item in res["aggregations"]["sip"]["buckets"]:
 		datelist = []
 		flowlist = []
-#		print sip_item
 		for item in sip_item["date"]["buckets"]:
 			datelist.append(item["key"])
 			flowlist.append(item["flow"]["value"])
@@ -103,9 +102,6 @@ def main(es,gte,lte,time_zone,dip):
 			ret_siplist.append(sip_item["key"])
 	return ret_siplist		
 
-#es = Elasticsearch([{'host':'10.2.7.33','port':'9200'}])
-#siplist = main(es=es,gte="2018-05-27 16:58:00",lte="2018-05-28 16:58:00",time_zone="+08:00",dip="89.185.44.100")
-#print siplist
 
 
 
