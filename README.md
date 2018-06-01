@@ -1,30 +1,24 @@
-# personal_respo
-This is a monitor for checking your host access c&c host by dns request.
+#Introduce
+This is a monitor for checking your host access c&c or mining pool host by dns request which collected by iTAP and stored in iMAP.
 
-The dns-blacklist are collected from open Information web site against malware.
+The dns-blacklist are collected from open source intelligence web site against malware.
 
-About get_blacklist profile 
-#you can extend data from other's Information web. Writing parsing data py-script into this profile.
-#Then enhancing the checking scale of monitor. 
+You can get the project:
+		git clone https://github.com/SuibianLiujq/personal_respo
 
-(1)please keep a funtion 'return dict' like this: 
-   the format like: 
-#                    { 'dns-request block domain':
-#                              { 'type':malware type 
-#                                'date':add date 'source':information web 
-#                                'status':online or offline 
-#                                'false_positive':'unknown' or 'low' or 'high' #misreporting rate for source web 
-#                                'level':'WARNING'or 'critical' #decide it by youself 
-#                                } , 
-#                    '...':
-#                              {
-#                              .... #other dict date 
-#                              }
-#                    , 
-#                    } #you can find example in project/get_blacklist profile
+#Platform 
+You can run it on Windows or Linux with Python version 2.7, and some modules are needed:
+	json  logging  datetime  time  elasticsearch  ConfigParser  socket  struct  re  requests  bs4  lxml 
 
-(2) add new file in blacklist_match.conf. sperate by ',' do not add ',' in the end. 
-#example : 
-fun1 = ransomwaretracker , malwaredomainlist , zeustracker , malwaredomains keep python file name consisting with configue name.
+#Configuration
+At configuration.conf,there is 5 seections.
+	[function_list] This is a list of files under the get_blacklist director,which get the blacklist from each source.
+	[Windows_path] & [Linux_path]  You can configure the data path and log path on different platform.
+	[frequency] You can set the start time and the period time to run it.
+	[Elasticsearch] You can set the iMAP server and es port,which used to get DNS data and insert alert.
 
-(3) 'from save_json.py import save_json' function write json file. you can find it at example file's end
+#Run
+Running ontime.py to start:
+		python ontime.py
+
+
