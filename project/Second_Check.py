@@ -90,7 +90,7 @@ def main(es,gte,lte,time_zone,dip):
 		for item in sip_item["date"]["buckets"]:
 			datelist.append(item["key"])
 			flowlist.append(item["flow"]["value"])
-		if len(datelist)<2:
+		if len(datelist)<3:
 			continue
 		date_dev = [datelist[i+1]-datelist[i]  for i in range(len(datelist)-1)]
 #		print date_dev

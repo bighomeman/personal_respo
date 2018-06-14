@@ -245,7 +245,7 @@ def main(gte,lte,timestamp,time_zone):
 #					print doc
 					if ipv4_pattern.findall(answer):
 						temp_lte = datetime.datetime.strptime(lte,'%Y-%m-%d %H:%M:%S')
-						gt = (temp_lte - datetime.timedelta(hours = 24)).strftime('%Y-%m-%d %H:%M:%S')
+						gt = (temp_lte - datetime.timedelta(hours = 72)).strftime('%Y-%m-%d %H:%M:%S')
 						sip_list = es.second_check(gte=gt,lte=lte,time_zone=time_zone,dip=answer)
 #						print sip_list
 						if sip_list:
