@@ -20,17 +20,16 @@ def ransomwaretracker(url = 'https://ransomwaretracker.abuse.ch/tracker/online/'
 	tr_list = get_tr_list(url)
 	domain_dict = {}
 	pattern_ip = re.compile('^[0-9.]+$')
-	pattern_date = re.compile('^[0-9-]+')
+	# pattern_date = re.compile('^[0-9-]+')
 	for tr in tr_list[1:]:
 		td_list = tr.find_all('td')
 		host = td_list[3].a.get_text()
 		if not pattern_ip.findall(host):
 			domain_dict[host] = {
-			'type':td_list[1].span.get_text()+'/'+td_list[2].span.get_text(),
+			'subtype': 'RANSOMWARE',
+			# 'desc_maltype':'[ransomware] '+td_list[1].span.get_text()+'/'+td_list[2].span.get_text(),
 			'status':'online',
-			'date':pattern_date.findall(td_list[0].get_text())[0],
-			'source':'https://ransomwaretracker.abuse.ch/host/{}/'.format(host),
-			'false_positive':'unknown'
+			'source':'https://ransomwaretracker.abuse.ch/host/{}/'.format(host)
 			}
 	return domain_dict
 

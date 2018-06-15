@@ -1,7 +1,8 @@
 ############################################################################
-#  This is a blacklist which contains dns name we collected by ourselves.  #
-#  Last update time is 2018-03-15.                                         #
-#  The format of this list:                                                #
-#  domain	add date	type	false positive	source	status             #
+#  This is a blacklist which contains dns name we collected by ourselves.  
+#  Last update time is 2018-03-15.                                         
+#  The format of this list (split by ' '):                                                
+#  domain source type             
 ############################################################################
-
+stratum_ltc.bw.com local COIN_MINER
+toknowall.com https://blog.talosintelligence.com/2018/05/VPNFilter.html MALWARE

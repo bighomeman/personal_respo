@@ -3,9 +3,11 @@
 import os
 import time
 import datetime
-from parser_config import trie_store_path,source_store_path,frequency,logger_info,logger_error
+from configuration import set_data_path,set_frequency,logger_info,logger_error
 import TrieSearch,merge_blacklist
 
+data_path = set_data_path()
+frequency = set_frequency()
 
 def store_run(storeDate):
     try:
@@ -18,7 +20,9 @@ def store_run(storeDate):
     except Exception, e:
         logger_error.error("Download failed.\n{0}".format(e))
 
-def run(delta,entertime):
+def run():
+    entertime = frequency[0]
+    delta = frequency[1]
 
     startTime = datetime.datetime.strptime(entertime, '%Y-%m-%d %H:%M:%S')
     #begin= '2017-05-24 23:59:57'
@@ -34,9 +38,9 @@ def run(delta,entertime):
             time.sleep(sleep_time)
 
         storeDate = datetime.datetime.now().strftime('%Y-%m-%d')
-        blacklist_dir = source_store_path[1]+source_store_path[0]+'-'+storeDate+".json"
+        blacklist_dir = os.path.join(data_path,'source'+'-'+storeDate+".json")
         # print blacklist_dir
-        blacklist_Trie_dir = trie_store_path[1]+trie_store_path[0]+'-'+storeDate+".json"
+        blacklist_Trie_dir = os.path.join(data_path,'trie'+'-'+storeDate+".json")
         # print blacklist_Trie_dir
 
         if not (os.path.exists(blacklist_dir) and os.path.exists(blacklist_Trie_dir)):
@@ -47,9 +51,15 @@ def run(delta,entertime):
             # execute the command
             gte = (startTime-delta).strftime('%Y-%m-%d %H:%M:%S')
             lte = (startTime).strftime('%Y-%m-%d %H:%M:%S')
-            timestamp = (startTime).strftime('%Y-%m-%dT%H:%M:%S.%f')+"+08:00"
 
-            TrieSearch.main(gte,lte,timestamp)
+            if time.daylight == 0:
+                time_zone = "%+03d:%02d" % (-(time.timezone/3600),time.timezone%3600/3600.0*60)
+            else:
+                time_zone = "%+03d:%02d" % (-(time.altzone/3600),time.altzone%3600/3600.0*60)
+
+            timestamp = (startTime).strftime('%Y-%m-%dT%H:%M:%S.%f')+time_zone
+
+            TrieSearch.main(gte,lte,timestamp,time_zone)
 
             # command = r'python TrieSearch.py "%s" "%s" "%s"' %(gte,lte,timestamp)
             # status = os.system(command)
@@ -60,7 +70,4 @@ def run(delta,entertime):
             logger_error.error("Checking failed.\n{0}".format(e))
 
 if __name__=="__main__":
-    # entertime = '2018-03-15 15:30:00'
-    entertime = frequency[0]
-    delta = frequency[1]
-    run(delta = delta,entertime = entertime)
+    run()

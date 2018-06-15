@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import os,sys
 from blacklist_tools import *
-from parser_config import source_store_path,trie_store_path,moudle_name,logger_info,logger_error
+from configuration import set_data_path,get_moudle_name,logger_info,logger_error
+
+data_path = set_data_path()
+moudle_name = get_moudle_name()
 
 sys.dont_write_bytecode = True
 
@@ -13,23 +16,28 @@ def get_blacklist_module():
         logger_info.info('Downloading {0}.'.format(file_name))
         try:
             module.main()
-            logger_info.info('Download {0} all completed.'.format(file_name))
+            logger_info.info('Download {0} completed.'.format(file_name))
         except Exception as e:
             logger_error.error('Download {0} failed.'.format(file_name))
         
 
-def merge_blacklist(dir,date,name):
+def merge_blacklist(date,name):
     parse_blacklist = moudle_name
     i = 0
     merge_result = {}
     for file_name in parse_blacklist:
-        result = load_dict(file_name + '.json')
+        if os.path.exists(file_name + '.json'):
+            result = load_dict(file_name + '.json')
+        else:
+            continue
+        # print len(result)
         if i ==0:
             merge_result = result
         else:
             merge_result = update_dict(result,merge_result)
-	i = i + 1
-    saveAsJSON(date,merge_result,dir,name)
+        i = i + 1
+        # print len(merge_result)
+    saveAsJSON(date,merge_result,data_path,name)
 
     for file_name in parse_blacklist:
         if os.path.exists(file_name+'.json'):
@@ -37,24 +45,16 @@ def merge_blacklist(dir,date,name):
 
 #建Trie树
 
-def store_trie(dir, date, name):
-    path = source_store_path[1] + source_store_path[0] + "-" +date + '.json'
+def store_trie(date, name):
+    path = os.path.join(data_path , 'source' + "-" +date + '.json')
     result = load_dict(path)
     # print result
-    saveAsJSON(date,create_Trie([x.split('.') for x in result.keys()]),dir,name)
+    saveAsJSON(date,create_Trie([x.split('.') for x in result.keys()]),data_path,name)
 
 def main(storeDate):
     get_blacklist_module()
-    merge_blacklist(source_store_path[1],storeDate,source_store_path[0])
-    store_trie(trie_store_path[1],storeDate,trie_store_path[0])
+    merge_blacklist(storeDate,'source')
+    store_trie(storeDate,'trie')
 
-
-# if __name__ == '__main__':
-#     if len(sys.argv)>1:
-#         get_blacklist_module()
-#         merge_blacklist(source_store_path[1],sys.argv[1],source_store_path[0])
-#         store_trie(trie_store_path[1],sys.argv[1],trie_store_path[0])
-#     else:
-#         print '[ERROR] Insufficient number of input parameters'
 
 
