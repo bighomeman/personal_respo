@@ -5,7 +5,7 @@ from elasticsearch import Elasticsearch
 import json,re
 import datetime,sys,os
 from blacklist_tools import load_dict,create_Trie
-from configuration import set_data_path,get_es_config,logger_info,logger_error
+from configuration import set_data_path,get_es_config,logger_info,logger_error,get_syslog_config
 import Second_Check
 
 data_path = set_data_path()
@@ -220,6 +220,7 @@ def main(gte,lte,timestamp,time_zone):
 	match_DNSList,match_blacklist = check_whitelist(match_DNSList,match_blacklist)
 	logger_info.info('Match DNS list :\n{0}'.format(match_DNSList))
 	logger_info.info('Match DNS blacklist :\n{0}'.format(match_blacklist))
+	syslogger = get_syslog_config()
 	# 匹配的DNS回插到es
 	if match_DNSList:
 		dip_list = []
@@ -242,6 +243,8 @@ def main(gte,lte,timestamp,time_zone):
 				for answer in answer_list:
 					doc['answer'] = answer
 					es.es_index(doc)
+					if syslogger:
+						syslogger.info(doc)
 #					print doc
 					if ipv4_pattern.findall(answer):
 						temp_lte = datetime.datetime.strptime(lte,'%Y-%m-%d %H:%M:%S')
@@ -253,6 +256,8 @@ def main(gte,lte,timestamp,time_zone):
 								doc["sip"] = sip
 								doc["level"] = "WARNING"
 								es.es_index(doc)
+								if syslogger:
+									syslogger.info(doc)
 		except Exception as e:
 			logger_error.error("Insert the alert of theat DNS to ES failed.\n{0}".format(e))
 

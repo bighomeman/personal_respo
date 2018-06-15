@@ -1,6 +1,6 @@
 import ConfigParser
 import re,datetime,platform,os
-import logging
+import logging,logging.handlers
 
 cp = ConfigParser.SafeConfigParser()
 cp.read(os.path.join(os.path.split(__file__)[0],"configuration.conf"))
@@ -113,7 +113,19 @@ def get_es_config():
 
 ############################################################################################################################
 
+def get_syslog_config():
+    syslog_key = cp.options("syslog")
+    syslog_config = []
+    for temp in syslog_key:
+        syslog_config.append(cp.get('syslog',temp))
 
-
-
-
+    logger_alert = logging.getLogger("MAL_DNS")
+    logger_alert.setLevel(logging.INFO)
+    alert_handler = logging.handlers.SysLogHandler((syslog_config[1],int(syslog_config[2])),logging.handlers.SysLogHandler.LOG_AUTH)
+    formatter = logging.Formatter('%(message)s')
+    alert_handler.setFormatter(formatter)
+    logger_alert.addHandler(alert_handler)
+    if syslog_config[0] == 1:
+        return logger_alert
+    else:
+        return False
