@@ -114,14 +114,14 @@ def get_es_config():
 ############################################################################################################################
 
 def get_syslog_config():
-    syslog_key = cp.options("Syslog")
+    syslog_key = cp.options("syslog")
     syslog_config = []
     for temp in syslog_key:
-        syslog_config.append(cp.get('Syslog',temp))
+        syslog_config.append(cp.get('syslog',temp))
 
     logger_alert = logging.getLogger("MAL_DNS")
     logger_alert.setLevel(logging.INFO)
-    alert_handler = logging.handlers.SysLogHandler((syslog_config[1],syslog_config[2]),logging.handlers.SysLogHandler.LOG_AUTH)
+    alert_handler = logging.handlers.SysLogHandler((syslog_config[1],int(syslog_config[2])),logging.handlers.SysLogHandler.LOG_AUTH)
     formatter = logging.Formatter('%(message)s')
     alert_handler.setFormatter(formatter)
     logger_alert.addHandler(alert_handler)
