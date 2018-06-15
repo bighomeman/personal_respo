@@ -50,7 +50,7 @@ def get_date_flow(es,gte,lte,time_zone,dip):
 					"date": {
 						"date_histogram": {
 							"field": "@timestamp",
-							"interval": "1m",
+							"interval": "5m",
 							"time_zone":time_zone,
 							"min_doc_count": 1
 						},
@@ -97,7 +97,7 @@ def main(es,gte,lte,time_zone,dip):
 #		print flowlist
 #		print calc_MAD(date_dev)
 #		print calc_MAD(flowlist)
-		if (calc_MAD(date_dev) <= 60000) and (calc_MAD(flowlist) <= 1):
+		if (calc_MAD(date_dev) == 0) and (calc_MAD(flowlist) == 0):
 			ret_siplist.append(sip_item["key"])
 	return ret_siplist		
 
