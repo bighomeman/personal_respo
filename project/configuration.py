@@ -95,6 +95,8 @@ def set_frequency():
     if frequency[0] == 'now':
         frequency[0] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
+    frequency[2] = datetime.timedelta(seconds = int(frequency[2]))
+
     return frequency
 
 # print set_frequency()
@@ -125,7 +127,7 @@ def get_syslog_config():
     formatter = logging.Formatter('%(message)s')
     alert_handler.setFormatter(formatter)
     logger_alert.addHandler(alert_handler)
-    if syslog_config[0] == 1:
+    if syslog_config[0] == "true":
         return logger_alert
     else:
         return False

@@ -27,4 +27,3 @@ def main():
 	ret_dict = localblacklist()
 	store_json(ret_dict,'localblacklist')
 
-# main()

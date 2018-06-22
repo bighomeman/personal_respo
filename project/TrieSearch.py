@@ -195,10 +195,10 @@ def main(gte,lte,timestamp,time_zone):
 	blacklist_Trie_dir = os.path.join(data_path,'trie'+'-'+str(time)+".json")
 	# print blacklist_Trie_dir
 	count = 0
-	temp_time = datetime.datetime.strptime(lte,'%Y-%m-%d %H:%M:%S')
+	temp_time = datetime.datetime.strptime(time,'%Y-%m-%d')
 	while (not (os.path.exists(blacklist_dir) and os.path.exists(blacklist_Trie_dir))) and count<30:
 		temp_time = temp_time + datetime.timedelta(days = -1)
-		time = temp_time.strftime('%Y-%m-%d %H:%M:%S').split(" ")
+		time = temp_time.strftime('%Y-%m-%d')
 		blacklist_dir = os.path.join(data_path,'source'+'-'+str(time)+".json")
 		blacklist_Trie_dir = os.path.join(data_path,'trie'+'-'+str(time)+".json")
 		count += 1
@@ -247,9 +247,7 @@ def main(gte,lte,timestamp,time_zone):
 						syslogger.info(doc)
 #					print doc
 					if ipv4_pattern.findall(answer):
-						temp_lte = datetime.datetime.strptime(lte,'%Y-%m-%d %H:%M:%S')
-						gt = (temp_lte - datetime.timedelta(hours = 72)).strftime('%Y-%m-%d %H:%M:%S')
-						sip_list = es.second_check(gte=gt,lte=lte,time_zone=time_zone,dip=answer)
+						sip_list = es.second_check(gte=gte,lte=lte,time_zone=time_zone,dip=answer)
 #						print sip_list
 						if sip_list:
 							for sip in sip_list:

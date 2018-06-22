@@ -23,6 +23,7 @@ def store_run(storeDate):
 def run():
     entertime = frequency[0]
     delta = frequency[1]
+    offset = frequency[2]
 
     startTime = datetime.datetime.strptime(entertime, '%Y-%m-%d %H:%M:%S')
     #begin= '2017-05-24 23:59:57'
@@ -49,8 +50,8 @@ def run():
         try:
             logger_info.info("Checking the DNS.")
             # execute the command
-            gte = (startTime-delta).strftime('%Y-%m-%d %H:%M:%S')
-            lte = (startTime).strftime('%Y-%m-%d %H:%M:%S')
+            gte = (startTime-delta-offset).strftime('%Y-%m-%d %H:%M:%S')
+            lte = (startTime-offset).strftime('%Y-%m-%d %H:%M:%S')
 
             if time.daylight == 0:
                 time_zone = "%+03d:%02d" % (-(time.timezone/3600),time.timezone%3600/3600.0*60)
