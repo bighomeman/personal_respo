@@ -113,6 +113,21 @@ def get_es_config():
 
 # print get_es_config()
 
+#############################################################################################################################
+
+def get_es_client():
+    #ES configuration
+    ES_key = cp.options("ES_client")
+    ES_client = []
+    for temp in ES_key:
+        ES_client.append(cp.get('ES_client',temp))
+    if ES_client[0] == "true":
+        return ES_client[1:]
+    else:
+        return False
+
+# print get_es_config()
+
 ############################################################################################################################
 
 def get_syslog_config():

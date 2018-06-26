@@ -5,15 +5,18 @@ from elasticsearch import Elasticsearch
 import json,re
 import datetime,sys,os
 from blacklist_tools import load_dict,create_Trie
-from configuration import set_data_path,get_es_config,logger_info,logger_error,get_syslog_config
+from configuration import set_data_path,get_es_config,logger_info,logger_error,get_syslog_config,get_es_client
 import Second_Check
 
 data_path = set_data_path()
 ES_config = get_es_config()
-
+ES_client = get_es_client()
 class ESclient(object):
 	def __init__(self):
-		self.__es_client=Elasticsearch([{'host':ES_config[0],'port':ES_config[1]}])
+		if ES_client:
+			self.__es_client=Elasticsearch([{'host':ES_config[0],'port':ES_config[1]}],http_auth=(ES_client[0],ES_client[1]))
+		else:
+			self.__es_client=Elasticsearch([{'host':ES_config[0],'port':ES_config[1]}])
 
 	def get_es_domain(self,gte,lte,time_zone):
 		# 获取es的dns-*索引的domain
