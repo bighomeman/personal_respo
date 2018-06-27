@@ -51,7 +51,7 @@ def query_last(es,gte,lte,time_zone,dip):
 	)
 	return result
 
-def get_date_flow(es,gte,lte,time_zone,dip,sip_filter):
+def get_date_flow(es,gte,lte,time_zone,dip,sip_list):
 	search_option = {
 		"size": 0,
 		"query": {
@@ -59,7 +59,7 @@ def get_date_flow(es,gte,lte,time_zone,dip,sip_filter):
 				"must": [
 					{
 						"query_string": {
-							"query": "dip:{0}{1}".format(dip,sip_filter),
+							"query": "dip:{0}".format(dip),
 							'analyze_wildcard': True
 						}
 					},
@@ -85,6 +85,7 @@ def get_date_flow(es,gte,lte,time_zone,dip,sip_filter):
 				"terms": {
 					"field": "sip",
 					"size": 100,
+					"include":sip_list,
 					"order": {
 						"flow": "desc"
 					}
@@ -132,20 +133,13 @@ def calc_MAD(datalist):
 def main(es,gte,lte,time_zone,dip):
 	result = query_last(es=es,gte=gte,lte=lte,time_zone=time_zone,dip=dip)
 	sip_list = []
-	sip_filter = ""
+
 	for sip in result["aggregations"]["sip"]["buckets"]:
 		sip_list.append(sip["key"])
-	if sip_list:
-		for sip in sip_list:
-			if sip != sip_list[-1]:
-				sip_filter = sip_filter + "sip:{0} OR ".format(sip)
-			else:
-				sip_filter = sip_filter + "sip:{0}".format(sip)
-		sip_filter = " AND (" + sip_filter + ")"
 
 	temp_lte = datetime.datetime.strptime(lte,'%Y-%m-%d %H:%M:%S')
 	gt = (temp_lte - datetime.timedelta(hours = 72)).strftime('%Y-%m-%d %H:%M:%S')
-	res = get_date_flow(es=es,gte=gt,lte=lte,time_zone=time_zone,dip=dip,sip_filter=sip_filter)
+	res = get_date_flow(es=es,gte=gt,lte=lte,time_zone=time_zone,dip=dip,sip_list=sip_list)
 
 	ret_siplist = []
 	for sip_item in res["aggregations"]["sip"]["buckets"]:
