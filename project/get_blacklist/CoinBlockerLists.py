@@ -14,7 +14,7 @@ def CoinBlockerLists():
 	domain_dict = {}
 	for domain in data:
 		domain_dict[domain] = {
-		'subtype':'COIN_MINER',
+		'subtype':'mining',
 		'source':'https://zerodot1.github.io/CoinBlockerLists/'
 		}
 	return domain_dict

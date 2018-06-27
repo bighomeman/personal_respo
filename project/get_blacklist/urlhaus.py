@@ -19,7 +19,7 @@ def urlhaus():
 		domain_dict[host] = {
 		'url': new_term[2],
 		'status': new_term[3],
-		'subtype': 'MALWARE',
+		'subtype': 'malware',
 		# 'desc_maltype':'[malurl] ' +new_term[4]+'/'+new_term[5],
 		'source': new_term[6].replace('"',""),
 		}

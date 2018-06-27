@@ -237,8 +237,8 @@ def main(gte,lte,timestamp,time_zone):
 				doc['domain'] = domain_es
 				doc['@timestamp'] = timestamp
 				doc['level'] = "info"
-				doc['type'] = "MAL_DNS"
-				doc['desc_type'] = "[MAL_DNS] Request of Malicious Domain Name Detection"
+				doc['type'] = "mal_dns"
+				doc['desc_type'] = "[mal_dns] Request of Malicious Domain Name Detection"
 				doc['desc_subtype'] = "[{0}] Malicious domain name:{1}".format(doc['subtype'],domain)
 				search_result = es.get_domain_info(gte=gte,lte=lte,domain=domain_es,time_zone=time_zone)
 				answer_list = get_answer_list(search_result)
