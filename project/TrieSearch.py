@@ -236,7 +236,7 @@ def main(gte,lte,timestamp,time_zone):
 				doc = blacklist[domain]
 				doc['domain'] = domain_es
 				doc['@timestamp'] = timestamp
-				doc['level'] = "INFO"
+				doc['level'] = "info"
 				doc['type'] = "mal_dns"
 				doc['desc_type'] = "[mal_dns] Request of Malicious Domain Name Detection"
 				doc['desc_subtype'] = "[{0}] Malicious domain name:{1}".format(doc['subtype'],domain)
@@ -255,7 +255,7 @@ def main(gte,lte,timestamp,time_zone):
 						if sip_list:
 							for sip in sip_list:
 								doc["sip"] = sip
-								doc["level"] = "WARN"
+								doc["level"] = "warn"
 								es.es_index(doc)
 								if syslogger:
 									syslogger.info(doc)
