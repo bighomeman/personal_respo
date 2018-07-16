@@ -38,6 +38,7 @@ def merge_blacklist(date,name):
         i = i + 1
         # print len(merge_result)
     saveAsJSON(date,merge_result,data_path,name)
+    saveAsJSON("default",merge_result,data_path,name)
 
     for file_name in parse_blacklist:
         if os.path.exists(file_name+'.json'):
@@ -49,7 +50,9 @@ def store_trie(date, name):
     path = os.path.join(data_path , 'source' + "-" +date + '.json')
     result = load_dict(path)
     # print result
-    saveAsJSON(date,create_Trie([x.split('.') for x in result.keys()]),data_path,name)
+    trie = create_Trie([x.split('.') for x in result.keys()])
+    saveAsJSON(date,trie,data_path,name)
+    saveAsJSON("default",trie,data_path,name)
 
 def main(storeDate):
     get_blacklist_module()

@@ -146,3 +146,14 @@ def get_syslog_config():
         return logger_alert
     else:
         return False
+
+def get_others_config():
+    keys = cp.options("others")
+    others_config = {}
+    for key in keys:
+        others_config[key] = cp.get("others",key)
+    return others_config
+# print get_others_config()
+
+
+

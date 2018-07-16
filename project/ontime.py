@@ -3,11 +3,12 @@
 import os
 import time
 import datetime
-from configuration import set_data_path,set_frequency,logger_info,logger_error
+from configuration import set_data_path,set_frequency,logger_info,logger_error,get_others_config
 import TrieSearch,merge_blacklist
 
 data_path = set_data_path()
 frequency = set_frequency()
+others    = get_others_config()
 
 def store_run(storeDate):
     try:
@@ -30,6 +31,8 @@ def run():
     #beginTime = datetime.datetime.strptime(begin, '%Y-%m-%d %H:%M:%S')
     #print startTime
     logger_info.info("Starting theat DNS checking.")
+    if others["offline"] == "true":
+        logger_info.info("Enable offline , use default intelligence.")
     while True:
         logger_info.info("The next start time :{0}".format(startTime))
         if datetime.datetime.now() < startTime:
@@ -44,7 +47,7 @@ def run():
         blacklist_Trie_dir = os.path.join(data_path,'trie'+'-'+storeDate+".json")
         # print blacklist_Trie_dir
 
-        if not (os.path.exists(blacklist_dir) and os.path.exists(blacklist_Trie_dir)):
+        if  (others["offline"] != "true") and not ((os.path.exists(blacklist_dir) and os.path.exists(blacklist_Trie_dir))):
             store_run(storeDate)
 
         try:

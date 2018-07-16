@@ -11,6 +11,7 @@ import Second_Check
 data_path = set_data_path()
 ES_config = get_es_config()
 ES_client = get_es_client()
+
 class ESclient(object):
 	def __init__(self):
 		if ES_client:
@@ -206,8 +207,9 @@ def main(gte,lte,timestamp,time_zone):
 		blacklist_Trie_dir = os.path.join(data_path,'trie'+'-'+str(time)+".json")
 		count += 1
 	if count == 30:
-		logger_error.error('No blacklist data in last 30 days.')
-		return 1
+		blacklist_dir = os.path.join(data_path,'source'+'-default'+".json")
+		blacklist_Trie_dir = os.path.join(data_path,'trie'+'-default'+".json")
+
 	es = ESclient()
 	try:
 		logger_info.info('Getting ES DNS domain completed.')
