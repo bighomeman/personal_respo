@@ -178,7 +178,7 @@ def check_whitelist(match_DNSList,match_blacklist):
 			text = f.read().split('\n')[6:-1]
 	except Exception as e:
 		logger_error.error("Get whitelist failed.\n{0}".format(e))
-		return match_DNSList,match_blacklist
+		raise e
 	split_DNSList = []
 	for domain in text:
 		split_DNSList.append(domain.split('.'))
@@ -209,6 +209,7 @@ def main(gte,lte,timestamp,time_zone):
 		logger_info.info('Get ES DNS domain completed.')
 	except Exception as e:
 		logger_error.error("Get ES DNS domain failed.\n{0}".format(e))
+		raise e
 	
 	split_DNSList = get_split_DNSList(search_result)
 
@@ -255,6 +256,7 @@ def main(gte,lte,timestamp,time_zone):
 									syslogger.info(doc)
 		except Exception as e:
 			logger_error.error("Insert the alert of theat DNS to ES failed.\n{0}".format(e))
+			raise e
 
 # if __name__ == '__main__':
 # 	main()

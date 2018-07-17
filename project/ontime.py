@@ -33,7 +33,9 @@ def run():
     logger_info.info("Starting theat DNS checking.")
     if others["offline"] == "true":
         logger_info.info("Enable offline , use default intelligence.")
+    count = 0
     while True:
+        time.sleep(count)
         logger_info.info("The next start time :{0}".format(startTime))
         if datetime.datetime.now() < startTime:
             minus_time = startTime - datetime.datetime.now()
@@ -70,8 +72,10 @@ def run():
             logger_info.info("Checking completed.")
             # print("Command status = %s."%status)
             startTime = startTime+delta
+            count = 0
         except Exception, e:
             logger_error.error("Checking failed.\n{0}".format(e))
+            count += 1
 
 if __name__=="__main__":
     run()
