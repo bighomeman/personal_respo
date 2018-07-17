@@ -195,20 +195,11 @@ def check_whitelist(match_DNSList,match_blacklist):
 def main(gte,lte,timestamp,time_zone):
 	time=datetime.datetime.now().strftime('%Y-%m-%d')
 	blacklist_dir = os.path.join(data_path,'source'+'-'+str(time)+".json")
-	# print blacklist_dir
 	blacklist_Trie_dir = os.path.join(data_path,'trie'+'-'+str(time)+".json")
-	# print blacklist_Trie_dir
-	count = 0
-	temp_time = datetime.datetime.strptime(time,'%Y-%m-%d')
-	while (not (os.path.exists(blacklist_dir) and os.path.exists(blacklist_Trie_dir))) and count<30:
-		temp_time = temp_time + datetime.timedelta(days = -1)
-		time = temp_time.strftime('%Y-%m-%d')
-		blacklist_dir = os.path.join(data_path,'source'+'-'+str(time)+".json")
-		blacklist_Trie_dir = os.path.join(data_path,'trie'+'-'+str(time)+".json")
-		count += 1
-	if count == 30:
-		blacklist_dir = os.path.join(data_path,'source'+'-default'+".json")
-		blacklist_Trie_dir = os.path.join(data_path,'trie'+'-default'+".json")
+
+	if not (os.path.exists(blacklist_dir) and os.path.exists(blacklist_Trie_dir)):
+		blacklist_dir = os.path.join(data_path,'source-default.json')
+		blacklist_Trie_dir = os.path.join(data_path,'trie-default.json')
 
 	es = ESclient()
 	try:
