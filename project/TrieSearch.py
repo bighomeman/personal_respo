@@ -178,6 +178,7 @@ def check_whitelist(match_DNSList,match_blacklist):
 			text = f.read().split('\n')[6:-1]
 	except Exception as e:
 		logger_error.error("Get whitelist failed.\n{0}".format(e))
+		return match_DNSList,match_blacklist
 	split_DNSList = []
 	for domain in text:
 		split_DNSList.append(domain.split('.'))
