@@ -204,7 +204,7 @@ def main(gte,lte,timestamp,time_zone):
 
 	es = ESclient()
 	try:
-		logger_info.info('Getting ES DNS domain completed.')
+		logger_info.info('Getting ES DNS domain.')
 		search_result = es.get_es_domain(gte=gte,lte=lte,time_zone=time_zone)
 		logger_info.info('Get ES DNS domain completed.')
 	except Exception as e:
@@ -229,12 +229,13 @@ def main(gte,lte,timestamp,time_zone):
 				domain = u'{}'.format('.'.join(match_blacklist[i]))
 				domain_es = '.'.join(match_DNSList[i])
 				doc = blacklist[domain]
+				source = doc.pop('source')
 				doc['domain'] = domain_es
 				doc['@timestamp'] = timestamp
 				doc['level'] = "info"
 				doc['type'] = "mal_dns"
 				doc['desc_type'] = "[mal_dns] Request of Malicious Domain Name Detection"
-				doc['desc_subtype'] = "[{0}] Malicious domain name:{1}".format(doc['subtype'],domain)
+				doc['desc_subtype'] = "[{0}] Intelligence comes from:{1}".format(doc['subtype'],source)
 				search_result = es.get_domain_info(gte=gte,lte=lte,domain=domain_es,time_zone=time_zone)
 				answer_list = get_answer_list(search_result)
 				dip_list = dip_list + answer_list
