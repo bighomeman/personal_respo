@@ -173,9 +173,10 @@ def get_answer_list(search_result):
 	return answer_list
 
 def check_whitelist(match_DNSList,match_blacklist):
+	pattern = re.compile('\r\n|\n')
 	try:
 		with open(os.path.join(data_path,"local_Whitelist.txt"),'r') as f:
-			text = f.read().split('\n')[6:-1]
+			text = pattern.split(f.read())[6:-1]
 	except Exception as e:
 		logger_error.error("Get whitelist failed.\n{0}".format(e))
 		raise e
@@ -228,7 +229,7 @@ def main(gte,lte,timestamp,time_zone):
 			for i in range(len(match_blacklist)):
 				domain = u'{}'.format('.'.join(match_blacklist[i]))
 				domain_es = '.'.join(match_DNSList[i])
-				doc = blacklist[domain]
+				doc = dict(blacklist[domain])
 				source = doc.pop('source')
 				doc['domain'] = domain_es
 				doc['@timestamp'] = timestamp
