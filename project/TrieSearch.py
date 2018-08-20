@@ -11,6 +11,7 @@ import Second_Check
 data_path = set_data_path()
 ES_config = get_es_config()
 ES_client = get_es_client()
+others    = get_others_config()
 
 class ESclient(object):
 	def __init__(self):
@@ -63,7 +64,7 @@ class ESclient(object):
 		}
 
 		search_result=self.__es_client.search(
-			index='dns-*',
+			index='{0}-*'.format(ES_config[2]),
 			body=search_option
 			)
 		# print search_result
@@ -113,7 +114,7 @@ class ESclient(object):
 			}
 
 		search_result=self.__es_client.search(
-			index='dns-*',
+			index='{0}-*'.format(ES_config[2]),
 			body=search_option
 			)
 		# print json.dumps(search_result,indent=4)
@@ -125,7 +126,7 @@ class ESclient(object):
 	def es_index(self,doc):
 		# 数据回插es的alert-*索引
 		ret = self.__es_client.index(
-			index = 'alert-{}'.format(datetime.datetime.now().strftime('%Y-%m-%d')),
+			index = '{0}-{1}'.format(ES_config[3],datetime.datetime.now().strftime('%Y-%m-%d')),
 			doc_type = 'netflow_v9',
 			body = doc
 			)
@@ -237,6 +238,11 @@ def main(gte,lte,timestamp,time_zone):
 				doc['type'] = "mal_dns"
 				doc['desc_type'] = "[mal_dns] Request of Malicious Domain Name Detection"
 				doc['desc_subtype'] = "[{0}] Intelligence comes from:{1}".format(doc['subtype'],source)
+				if others["only_info"] == "true":
+					es.es_index(doc)
+					if syslogger:
+						syslogger.info(doc)
+					continue
 				search_result = es.get_domain_info(gte=gte,lte=lte,domain=domain_es,time_zone=time_zone)
 				answer_list = get_answer_list(search_result)
 				dip_list = dip_list + answer_list
