@@ -5,7 +5,7 @@ from elasticsearch import Elasticsearch
 import json,re
 import datetime,sys,os
 from blacklist_tools import load_dict,create_Trie
-from configuration import set_data_path,get_es_config,logger_info,logger_error,get_syslog_config,get_es_client
+from configuration import set_data_path,get_es_config,logger_info,logger_error,get_syslog_config,get_es_client,get_others_config
 import Second_Check
 
 data_path = set_data_path()
