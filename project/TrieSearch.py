@@ -79,7 +79,7 @@ class ESclient(object):
 					"must": [
 						{
 							"query_string": {
-							"query": "domain:{0} AND isresponse:1".format(domain),
+							"query": "domain:{0} AND answer:[0.0.0.0 TO 255.255.255.255]".format(domain),
 							'analyze_wildcard': True
 							}
 						},
@@ -247,7 +247,7 @@ def main(gte,lte,timestamp,time_zone):
 				answer_list = get_answer_list(search_result)
 				dip_list = dip_list + answer_list
 				for answer in answer_list:
-					doc['answer'] = answer
+					doc['dip'] = answer
 					es.es_index(doc)
 					if syslogger:
 						syslogger.info(doc)
