@@ -247,7 +247,9 @@ def main(gte,lte,timestamp,time_zone):
 				answer_list = get_answer_list(search_result)
 				dip_list = dip_list + answer_list
 				for answer in answer_list:
-					doc['dip'] = answer
+					doc['answer'] = answer
+					if ipv4_pattern.findall(answer):
+						doc['dip'] = answer
 					es.es_index(doc)
 					if syslogger:
 						syslogger.info(doc)
