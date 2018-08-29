@@ -79,7 +79,7 @@ class ESclient(object):
 					"must": [
 						{
 							"query_string": {
-							"query": "domain:{0} AND answer:[0.0.0.0 TO 255.255.255.255]".format(domain),
+							"query": "domain:{0} AND isresponse:1".format(domain),
 							'analyze_wildcard': True
 							}
 						},
